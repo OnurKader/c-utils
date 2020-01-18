@@ -54,17 +54,22 @@ int8_t list_destroy(List* list)
 	// 0.
 	if(!list)
 		return -1;
-	Node* curr = list->head;
-	while(curr->next)
+	if(list->head)
 	{
+		Node* curr = list->head;
+		while(curr->next)
+		{
+			curr->prev = NULL;
+			curr = curr->next;
+			free(curr->prev);
+		}
 		curr->prev = NULL;
-		curr = curr->next;
-		free(curr->prev);
+		free(curr);
+		list->head = list->tail = NULL;
+		free(list);
+		return 0;
 	}
-	curr->prev = NULL;
-	free(curr);
-	free(list);
-	return 0;
+	return 1;
 }
 
 int8_t list_isEmpty(List* list) { return (list->length == 0); }
@@ -120,10 +125,55 @@ int64_t list_pop(List* list)
 	return ret;
 }
 
-int8_t list_insert(List* list, int64_t num, size_t index) {}
-
-void list_print(List* list)
+int8_t list_insert(List* list, int64_t num, size_t index)
 {
+	if(!list)
+		return -1;
+	else if(list->length > MAX_LIST_LENGTH || index > list->length)
+		return 1;
+	Node* temp = list_createNode(num);
+	if(!temp)
+		return -1;
+
+	if(index == 0UL)
+	{
+		list->head->prev = temp;
+		temp->next = list->head;
+		list->head = temp;
+		++(list->length);
+		return 0;
+	}
+	else if(index == list->length)
+	{
+		list->tail->next = temp;
+		temp->prev = list->tail;
+		list->tail = temp;
+		++(list->length);
+
+		return 0;
+	}
+
+	Node* curr = list->head;
+	size_t i = 0UL;
+	while(i++ < index && curr)
+	{
+		curr = curr->next;
+	}
+	curr->prev->next = temp;
+	temp->prev = curr->prev;
+	curr->prev = temp;
+	temp->next = curr;
+	++(list->length);
+	return 0;
+}
+
+int8_t list_print(List* list)
+{
+	if(!list)
+		return -1;
+	else if(!list->length)
+		return 1;
+
 	Node* curr = list->head;
 	size_t i = 0ULL;
 	while(curr)
@@ -131,5 +181,6 @@ void list_print(List* list)
 		printf("%lu) %ld\n", i++, curr->elem);
 		curr = curr->next;
 	}
-	printf("List's Length: %lu\n", list->length);
+	printf("Length: %lu\n", list->length);
+	return 0;
 }

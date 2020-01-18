@@ -11,9 +11,14 @@ int main(void)
 		list_push(list, 74L);
 		list_push(list, -1L);
 		list_push(list, 2309L);
-		list_push(list, 405L);
-		list_push(list, 0L);
-		list_push(list, -2309L);
+		/* list_push(list, 405L); */
+		/* list_push(list, 0L); */
+		/* list_push(list, -2309L); */
+
+		/* list_insert(list, 69L, 3UL); */
+		/* list_insert(list, 420L, 6UL); */
+		/* list_insert(list, -69420L, 2UL); */
+		/* list_insert(list, 69420L, 0UL); */
 
 		list_print(list);
 
