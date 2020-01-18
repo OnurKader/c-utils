@@ -1,0 +1,26 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+List	doub_link_list.h	/^typedef struct List$/;"	s
+List	doub_link_list.h	/^} List;$/;"	t	typeref:struct:List
+MAX_LIST_LENGTH	doub_link_list.h	8;"	d
+Node	doub_link_list.h	/^typedef struct Node$/;"	s
+Node	doub_link_list.h	/^} Node;$/;"	t	typeref:struct:Node
+elem	doub_link_list.h	/^	int64_t elem;$/;"	m	struct:Node
+head	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
+length	doub_link_list.h	/^	size_t length;$/;"	m	struct:List
+list_createNode	doub_link_list.h	/^Node* list_createNode(int64_t num)$/;"	f
+list_destroy	doub_link_list.h	/^int8_t list_destroy(List* list)$/;"	f
+list_init	doub_link_list.h	/^int8_t list_init(List** list)$/;"	f
+list_insert	doub_link_list.h	/^int8_t list_insert(List* list, int64_t num, size_t index) {}$/;"	f
+list_isEmpty	doub_link_list.h	/^int8_t list_isEmpty(List* list) { return (list->length == 0); }$/;"	f
+list_pop	doub_link_list.h	/^int64_t list_pop(List* list)$/;"	f
+list_print	doub_link_list.h	/^void list_print(List* list)$/;"	f
+list_push	doub_link_list.h	/^int8_t list_push(List* list, int64_t num)$/;"	f
+main	main.c	/^int main(void)$/;"	f
+next	doub_link_list.h	/^	struct Node *next, *prev;$/;"	m	struct:Node	typeref:struct:Node::Node
+prev	doub_link_list.h	/^	struct Node *next, *prev;$/;"	m	struct:Node	typeref:struct:Node::
+tail	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
