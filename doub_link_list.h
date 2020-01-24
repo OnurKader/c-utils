@@ -184,3 +184,23 @@ int8_t list_print(List* list)
 	printf("Length: %lu\n", list->length);
 	return 0;
 }
+
+int64_t list_remove(List* list, size_t index)
+{
+	// Be smart about return errors, maybe write to an integer as an argument
+	if(!list)
+		return -1;
+	else if(!list->length)
+		return 1;
+
+	int64_t ret;
+	size_t i = 0ULL;
+	Node* curr = list->head;
+	while(i++ < index && curr)
+	{
+		curr = curr->next;
+	}
+	ret = curr->elem;
+	return ret;
+}
+
