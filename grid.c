@@ -19,6 +19,8 @@
 #define GRID_ROW HEIGHT / GRID_H
 #define GRID_COL WIDTH / GRID_W
 
+#define GRID_LENGTH GRID_COL* GRID_ROW
+
 typedef vec_t(Point) vec_point_t;
 
 enum state_t
@@ -34,10 +36,16 @@ typedef struct grid_t
 	vec_point_t v;
 } grid_t;
 
+struct Grid
+{
+	grid_t grids[GRID_ROW][GRID_COL];
+	SDL_Rect rect_array[GRID_LENGTH];
+};
+
 typedef struct game_t
 {
 	enum state_t state;
-	grid_t grids[GRID_ROW][GRID_COL];
+	struct Grid grid;
 } game_t;
 
 void initGame(game_t* game)
@@ -45,11 +53,22 @@ void initGame(game_t* game)
 	for(uint16_t i = 0U; i < GRID_ROW; ++i)
 		for(uint16_t j = 0U; j < GRID_COL; ++j)
 		{
-			vec_init(&game->grids[i][j].v);
-			vec_reserve(&game->grids[i][j].v, 4U);
+			vec_init(&game->grid.grids[i][j].v);
+			vec_reserve(&game->grid.grids[i][j].v, 4U);
+			game->grid.rect_array[j + i * GRID_COL] =
+				(SDL_Rect){j * GRID_W, i * GRID_H, GRID_W, GRID_H};
 		}
 
 	game->state = RUNNING;
+}
+
+void deinitGame(game_t* game)
+{
+	for(uint16_t i = 0U; i < GRID_ROW; ++i)
+		for(uint16_t j = 0U; j < GRID_COL; ++j)
+			vec_deinit(&game->grid.grids[i][j].v);
+
+	game->state = QUITTING;
 }
 
 int main(void)
@@ -90,23 +109,32 @@ int main(void)
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
-			if(e.type == SDL_QUIT)
-				game.state = QUITTING;
-			else if(e.type == SDL_KEYDOWN)
-				switch(e.key.keysym.sym)
-				{
-					case SDLK_UP: printf("Pressed UP!\n"); break;
-					case SDLK_DOWN: printf("Pressed DOWN!\n"); break;
-					case SDLK_LEFT: printf("Pressed LEFT!\n"); break;
-					case SDLK_RIGHT: printf("Pressed RIGHT!\n"); break;
-				}
+			switch(e.type)
+			{
+				case SDL_QUIT: deinitGame(&game); break;
+				case SDL_KEYDOWN:
+					switch(e.key.keysym.sym)
+					{
+						case SDLK_UP: printf("UP!\n"); break;
+						case SDLK_DOWN: printf("DOWN!\n"); break;
+						case SDLK_LEFT: printf("LEFT!\n"); break;
+						case SDLK_RIGHT: printf("RIGHT!\n"); break;
+					}
+					break;
+				default: break;
+			}
 		}
 		// Render
 		SDL_SetRenderDrawColor(render, 0U, 0U, 0U, 255U);
 		SDL_RenderClear(render);
+
+		SDL_SetRenderDrawColor(render, 255U, 255U, 255U, 255U);
+		SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
+
 		SDL_RenderPresent(render);
 	}
 
+	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 	return 0;
