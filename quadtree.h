@@ -35,9 +35,24 @@ bool pointInRect(const Point* const p, const Rect* const r)
 			(p->y < r->origin.y + r->h));
 }
 
+bool intersects(const Rect* const r1, const Rect* const r2)
+{
+	if(r1->origin.x + r1->w < r2->origin.x)	   // r1 is left of r2
+		return false;
+	if(r1->origin.x > r2->origin.x + r2->w)	   // r1 is right of r2
+		return false;
+
+	if(r1->origin.y + r1->h < r2->origin.y)	   // r1 is above r2
+		return false;
+	if(r1->origin.y > r2->origin.y + r2->h)	   // r1 is below r2
+		return false;
+
+	return true;
+}
+
 Point makePoint(float x, float y) { return (Point){x, y}; }
 
-Rect makeRect(float x, float y, float w, float h)
+Rect makeRect(const float x, const float y, const float w, const float h)
 {
 	Rect temp;
 	temp.origin.x = x;
@@ -61,6 +76,10 @@ Point getCenterOfRect(Rect* const rect)
 typedef struct QuadTree
 {
 	Point points[BUCKET_SIZE];
+	uint8_t num_of_points;
+	size_t total_points;
+
+	Rect boundary;
 
 	struct QuadTree* north_west;
 	struct QuadTree* north_east;
@@ -68,9 +87,77 @@ typedef struct QuadTree
 	struct QuadTree* south_east;
 } QuadTree;
 
-bool qt_init(QuadTree** qt);
+bool qt_init(QuadTree** qt, const Rect rect)
+{
+	QuadTree* temp = (QuadTree*)calloc(1U, sizeof(struct QuadTree));
+	if(temp)
+	{
+		temp->boundary = rect;
+		*qt = temp;
+		return true;
+	}
+	return false;
+}
 
-bool qt_destroy(QuadTree* qt);
+bool qt_destroy(QuadTree* const qt)
+{
+	// TODO Iterate over the children until one of them is NULL and free at each step, just
+	// recurse through it.
+	free(qt);
+	return true;
+}
+
+// TODO subdivide
+void qt_subdivide(QuadTree* const qt) {}
+
+bool qt_insert(QuadTree* const qt, const Point p)
+{
+	if(!pointInRect(&p, &qt->boundary))
+		return false;
+
+	if(qt->num_of_points < BUCKET_SIZE && !qt->north_west)
+	{
+		qt->points[qt->num_of_points++] = p;
+		return true;
+	}
+
+	if(!qt->north_west)
+		qt_subdivide(qt);
+
+	if(qt_insert(qt->north_west, p))
+		return true;
+	if(qt_insert(qt->north_east, p))
+		return true;
+	if(qt_insert(qt->south_west, p))
+		return true;
+	if(qt_insert(qt->south_east, p))
+		return true;
+
+	return false;
+}
+
+Point* qt_getPointsInRect(QuadTree* const qt,
+						  const Rect* const rect,
+						  Point points[],
+						  size_t* total_num_of_points)
+{
+	if(!intersects(&qt->boundary, rect))
+		return points;
+
+	for(uint8_t i = 0U; i < qt->num_of_points; ++i)
+		if(pointInRect(&qt->points[i], rect))
+			points[(*total_num_of_points)++] = qt->points[i];
+
+	if(!qt->north_west)
+		return points;
+
+	qt_getPointsInRect(qt->north_west, rect, points, total_num_of_points);
+	qt_getPointsInRect(qt->north_east, rect, points, total_num_of_points);
+	qt_getPointsInRect(qt->south_west, rect, points, total_num_of_points);
+	qt_getPointsInRect(qt->south_east, rect, points, total_num_of_points);
+
+	return points;
+}
 
 #endif
 
