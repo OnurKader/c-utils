@@ -14,7 +14,7 @@
 
 float dist(float a, float b, float c, float d)
 {
-	return sqrt((a - c) * (a - c) + (b - d) * (b - d));
+	return sqrtf((a - c) * (a - c) + (b - d) * (b - d));
 }
 
 typedef struct Point
@@ -49,13 +49,28 @@ Rect makeRect(float x, float y, float w, float h)
 	return temp;
 }
 
+#define getCentreOfRect getCenterOfRect
+
+Point getCenterOfRect(Rect* const rect)
+{
+	rect->center =
+		makePoint(rect->origin.x + rect->w / 2.f, rect->origin.y + rect->h / 2.f);
+	return rect->center;
+}
+
 typedef struct QuadTree
 {
+	Point points[BUCKET_SIZE];
+
 	struct QuadTree* north_west;
 	struct QuadTree* north_east;
 	struct QuadTree* south_west;
 	struct QuadTree* south_east;
 } QuadTree;
+
+bool qt_init(QuadTree** qt);
+
+bool qt_destroy(QuadTree* qt);
 
 #endif
 

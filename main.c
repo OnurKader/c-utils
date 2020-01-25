@@ -33,6 +33,9 @@ int main(void)
 	/* } */
 
 	QuadTree* qt;
+	qt_init(&qt);
+
+	qt_destroy(qt);
 
 	return 0;
 }
