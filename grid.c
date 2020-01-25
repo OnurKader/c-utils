@@ -1,5 +1,6 @@
 #include "doub_link_list.h"
 #include "quadtree.h"
+#include "vec.h"
 
 #include <SDL2/SDL.h>
 #include <math.h>
@@ -15,6 +16,11 @@
 #define GRID_W 40U
 #define GRID_H 40U
 
+#define GRID_ROW HEIGHT / GRID_H
+#define GRID_COL WIDTH / GRID_W
+
+typedef vec_t(Point) vec_point_t;
+
 enum state_t
 {
 	RUNNING,
@@ -25,18 +31,31 @@ enum state_t
 
 typedef struct grid_t
 {
+	vec_point_t v;
 } grid_t;
 
 typedef struct game_t
 {
 	enum state_t state;
-
+	grid_t grids[GRID_ROW][GRID_COL];
 } game_t;
+
+void initGame(game_t* game)
+{
+	for(uint16_t i = 0U; i < GRID_ROW; ++i)
+		for(uint16_t j = 0U; j < GRID_COL; ++j)
+		{
+			vec_init(&game->grids[i][j].v);
+			vec_reserve(&game->grids[i][j].v, 4U);
+		}
+
+	game->state = RUNNING;
+}
 
 int main(void)
 {
 	game_t game;
-	game.state = RUNNING;
+	initGame(&game);
 
 	if(SDL_Init(SDL_INIT_VIDEO))
 	{
