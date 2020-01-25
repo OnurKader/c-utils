@@ -12,9 +12,31 @@
 #define WIDTH  1280U
 #define HEIGHT 720U
 
+#define GRID_W 40U
+#define GRID_H 40U
+
+enum state_t
+{
+	RUNNING,
+	QUITTING,
+	INPUT,
+	OUTPUT
+};
+
+typedef struct grid_t
+{
+} grid_t;
+
+typedef struct game_t
+{
+	enum state_t state;
+
+} game_t;
+
 int main(void)
 {
-	bool quit = false;
+	game_t game;
+	game.state = RUNNING;
 
 	if(SDL_Init(SDL_INIT_VIDEO))
 	{
@@ -44,13 +66,13 @@ int main(void)
 		exit(1);
 	}
 
-	while(!quit)
+	while(game.state != QUITTING)
 	{
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
 			if(e.type == SDL_QUIT)
-				quit = true;
+				game.state = QUITTING;
 			else if(e.type == SDL_KEYDOWN)
 				switch(e.key.keysym.sym)
 				{
