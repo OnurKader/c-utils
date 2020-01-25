@@ -5,9 +5,13 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 BUCKET_SIZE	quadtree.h	12;"	d
-GRID_H	grid.c	16;"	d	file:
-GRID_W	grid.c	15;"	d	file:
-HEIGHT	grid.c	13;"	d	file:
+GRID_COL	grid.c	20;"	d	file:
+GRID_H	grid.c	17;"	d	file:
+GRID_LENGTH	grid.c	22;"	d	file:
+GRID_ROW	grid.c	19;"	d	file:
+GRID_W	grid.c	16;"	d	file:
+Grid	grid.c	/^struct Grid$/;"	s	file:
+HEIGHT	grid.c	14;"	d	file:
 INPUT	grid.c	/^	INPUT,$/;"	e	enum:state_t	file:
 List	doub_link_list.h	/^typedef struct List$/;"	s
 List	doub_link_list.h	/^} List;$/;"	t	typeref:struct:List
@@ -24,22 +28,26 @@ QuadTree	quadtree.h	/^} QuadTree;$/;"	t	typeref:struct:QuadTree
 RUNNING	grid.c	/^	RUNNING,$/;"	e	enum:state_t	file:
 Rect	quadtree.h	/^typedef struct Rect$/;"	s
 Rect	quadtree.h	/^} Rect;$/;"	t	typeref:struct:Rect
-VEC_H	vec.h	9;"	d
-VEC_VERSION	vec.h	14;"	d
-WIDTH	grid.c	12;"	d	file:
+VEC_H	vec.h	11;"	d
+VEC_VERSION	vec.h	16;"	d
+WIDTH	grid.c	13;"	d	file:
 boundary	quadtree.h	/^	Rect boundary;$/;"	m	struct:QuadTree
 center	quadtree.h	/^	Point center;$/;"	m	struct:Rect
 center	quadtree.h	9;"	d
+deinitGame	grid.c	/^void deinitGame(game_t* game)$/;"	f
 dist	quadtree.h	/^float dist(float a, float b, float c, float d)$/;"	f
 elem	doub_link_list.h	/^	int64_t elem;$/;"	m	struct:Node
 game_t	grid.c	/^typedef struct game_t$/;"	s	file:
 game_t	grid.c	/^} game_t;$/;"	t	typeref:struct:game_t	file:
 getCenterOfRect	quadtree.h	/^Point getCenterOfRect(Rect* const rect)$/;"	f
 getCentreOfRect	quadtree.h	67;"	d
+grid	grid.c	/^	struct Grid grid;$/;"	m	struct:game_t	typeref:struct:game_t::Grid	file:
 grid_t	grid.c	/^typedef struct grid_t$/;"	s	file:
 grid_t	grid.c	/^} grid_t;$/;"	t	typeref:struct:grid_t	file:
+grids	grid.c	/^	grid_t grids[GRID_ROW][GRID_COL];$/;"	m	struct:Grid	file:
 h	quadtree.h	/^	float w, h;$/;"	m	struct:Rect
 head	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
+initGame	grid.c	/^void initGame(game_t* game)$/;"	f
 intersects	quadtree.h	/^bool intersects(const Rect* const r1, const Rect* const r2)$/;"	f
 length	doub_link_list.h	/^	size_t length;$/;"	m	struct:List
 list_createNode	doub_link_list.h	/^Node* list_createNode(int64_t num)$/;"	f
@@ -68,52 +76,55 @@ qt_getPointsInRect	quadtree.h	/^Point* qt_getPointsInRect(QuadTree* const qt,$/;
 qt_init	quadtree.h	/^bool qt_init(QuadTree** qt, const Rect rect)$/;"	f
 qt_insert	quadtree.h	/^bool qt_insert(QuadTree* const qt, const Point p)$/;"	f
 qt_subdivide	quadtree.h	/^void qt_subdivide(QuadTree* const qt)$/;"	f
+rect_array	grid.c	/^	SDL_Rect rect_array[GRID_LENGTH];$/;"	m	struct:Grid	file:
 south_east	quadtree.h	/^	struct QuadTree* south_east;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
 south_west	quadtree.h	/^	struct QuadTree* south_west;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
 state	grid.c	/^	enum state_t state;$/;"	m	struct:game_t	typeref:enum:game_t::state_t	file:
 state_t	grid.c	/^enum state_t$/;"	g	file:
 tail	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
 total_points	quadtree.h	/^	size_t total_points;$/;"	m	struct:QuadTree
+v	grid.c	/^	vec_point_t v;$/;"	m	struct:grid_t	file:
 vec_char_t	vec.h	/^typedef vec_t(char) vec_char_t;$/;"	t
-vec_clear	vec.h	70;"	d
-vec_compact	vec.h	86;"	d
-vec_compact_	vec.c	/^int vec_compact_(char **data, int *length, int *capacity, int memsz) {$/;"	f
+vec_clear	vec.h	51;"	d
+vec_compact	vec.h	59;"	d
+vec_compact_	vec.c	/^int vec_compact_(char **data, int *length, int *capacity, int memsz)$/;"	f
 vec_deinit	vec.h	29;"	d
 vec_double_t	vec.h	/^typedef vec_t(double) vec_double_t;$/;"	t
-vec_expand_	vec.c	/^int vec_expand_(char **data, int *length, int *capacity, int memsz) {$/;"	f
-vec_extend	vec.h	100;"	d
-vec_find	vec.h	104;"	d
-vec_first	vec.h	74;"	d
+vec_expand_	vec.c	/^int vec_expand_(char **data, int *length, int *capacity, int memsz)$/;"	f
+vec_extend	vec.h	73;"	d
+vec_find	vec.h	75;"	d
+vec_first	vec.h	53;"	d
 vec_float_t	vec.h	/^typedef vec_t(float) vec_float_t;$/;"	t
-vec_foreach	vec.h	130;"	d
-vec_foreach_ptr	vec.h	144;"	d
-vec_foreach_ptr_rev	vec.h	151;"	d
-vec_foreach_rev	vec.h	137;"	d
-vec_init	vec.h	25;"	d
-vec_insert	vec.h	53;"	d
-vec_insert_	vec.c	/^int vec_insert_(char **data, int *length, int *capacity, int memsz,$/;"	f
+vec_foreach	vec.h	106;"	d
+vec_foreach_ptr	vec.h	115;"	d
+vec_foreach_ptr_rev	vec.h	119;"	d
+vec_foreach_rev	vec.h	110;"	d
+vec_init	vec.h	27;"	d
+vec_insert	vec.h	42;"	d
+vec_insert_	vec.c	/^int vec_insert_(char **data, int *length, int *capacity, int memsz, int idx)$/;"	f
 vec_int_t	vec.h	/^typedef vec_t(int) vec_int_t;$/;"	t
-vec_last	vec.h	78;"	d
-vec_pop	vec.h	39;"	d
-vec_push	vec.h	34;"	d
-vec_pusharr	vec.h	90;"	d
-vec_remove	vec.h	113;"	d
-vec_reserve	vec.h	82;"	d
-vec_reserve_	vec.c	/^int vec_reserve_(char **data, int *length, int *capacity, int memsz, int n) {$/;"	f
-vec_reserve_po2_	vec.c	/^int vec_reserve_po2_($/;"	f
-vec_reverse	vec.h	121;"	d
-vec_sort	vec.h	58;"	d
-vec_splice	vec.h	43;"	d
-vec_splice_	vec.c	/^void vec_splice_(char **data, int *length, int *capacity, int memsz,$/;"	f
-vec_str_t	vec.h	/^typedef vec_t(char*) vec_str_t;$/;"	t
-vec_swap	vec.h	62;"	d
-vec_swap_	vec.c	/^void vec_swap_(char **data, int *length, int *capacity, int memsz,$/;"	f
-vec_swapsplice	vec.h	48;"	d
-vec_swapsplice_	vec.c	/^void vec_swapsplice_(char **data, int *length, int *capacity, int memsz,$/;"	f
-vec_t	vec.h	21;"	d
-vec_truncate	vec.h	66;"	d
-vec_unpack_	vec.h	17;"	d
-vec_void_t	vec.h	/^typedef vec_t(void*) vec_void_t;$/;"	t
+vec_last	vec.h	55;"	d
+vec_point_t	grid.c	/^typedef vec_t(Point) vec_point_t;$/;"	t	file:
+vec_pop	vec.h	34;"	d
+vec_push	vec.h	31;"	d
+vec_pusharr	vec.h	61;"	d
+vec_remove	vec.h	87;"	d
+vec_reserve	vec.h	57;"	d
+vec_reserve_	vec.c	/^int vec_reserve_(char **data, int *length, int *capacity, int memsz, int n)$/;"	f
+vec_reserve_po2_	vec.c	/^int vec_reserve_po2_(char **data, int *length, int *capacity, int memsz, int n)$/;"	f
+vec_reverse	vec.h	96;"	d
+vec_sort	vec.h	45;"	d
+vec_splice	vec.h	36;"	d
+vec_splice_	vec.c	/^void vec_splice_(char **data, int *length, int *capacity, int memsz, int start, int count)$/;"	f
+vec_str_t	vec.h	/^typedef vec_t(char *) vec_str_t;$/;"	t
+vec_swap	vec.h	47;"	d
+vec_swap_	vec.c	/^void vec_swap_(char **data, int *length, int *capacity, int memsz, int idx1, int idx2)$/;"	f
+vec_swapsplice	vec.h	39;"	d
+vec_swapsplice_	vec.c	/^void vec_swapsplice_($/;"	f
+vec_t	vec.h	20;"	d
+vec_truncate	vec.h	49;"	d
+vec_unpack_	vec.h	18;"	d
+vec_void_t	vec.h	/^typedef vec_t(void *) vec_void_t;$/;"	t
 w	quadtree.h	/^	float w, h;$/;"	m	struct:Rect
 x	quadtree.h	/^	float x, y;$/;"	m	struct:Point
 y	quadtree.h	/^	float x, y;$/;"	m	struct:Point

@@ -3,6 +3,7 @@
 #include "vec.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -10,16 +11,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define WIDTH  1280U
-#define HEIGHT 720U
+#define WIDTH  (1280U)
+#define HEIGHT (720U)
 
-#define GRID_W 40U
-#define GRID_H 40U
+#define GRID_W (40U)
+#define GRID_H (40U)
 
-#define GRID_ROW HEIGHT / GRID_H
-#define GRID_COL WIDTH / GRID_W
+#define GRID_ROW (HEIGHT / GRID_H)
+#define GRID_COL (WIDTH / GRID_W)
 
-#define GRID_LENGTH GRID_COL* GRID_ROW
+#define GRID_LENGTH (GRID_COL * GRID_ROW)
 
 typedef vec_t(Point) vec_point_t;
 
@@ -30,6 +31,12 @@ enum state_t
 	INPUT,
 	OUTPUT
 };
+
+struct mouse
+{
+	int x;
+	int y;
+} mouse;
 
 typedef struct grid_t
 {
@@ -82,12 +89,13 @@ int main(void)
 		exit(1);
 	}
 
-	SDL_Window* window = SDL_CreateWindow("Grid Particle System",
-										  SDL_WINDOWPOS_UNDEFINED,
-										  SDL_WINDOWPOS_UNDEFINED,
-										  WIDTH,
-										  HEIGHT,
-										  SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
+	SDL_Window* window =
+		SDL_CreateWindow("Grid Particle System",
+						 SDL_WINDOWPOS_UNDEFINED,
+						 SDL_WINDOWPOS_UNDEFINED,
+						 WIDTH,
+						 HEIGHT,
+						 SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
 	if(!window)
 	{
 		fprintf(stderr, "Couldn't create window: %s\n", SDL_GetError());
@@ -106,6 +114,10 @@ int main(void)
 
 	while(game.state != QUITTING)
 	{
+		/* SDL_SetRenderDrawColor(render, 0U, 0U, 0U, 255U); */
+		SDL_SetRenderDrawColor(render, 18U, 18U, 42U, 255U);
+		SDL_RenderClear(render);
+
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
@@ -115,20 +127,46 @@ int main(void)
 				case SDL_KEYDOWN:
 					switch(e.key.keysym.sym)
 					{
-						case SDLK_UP: printf("UP!\n"); break;
-						case SDLK_DOWN: printf("DOWN!\n"); break;
-						case SDLK_LEFT: printf("LEFT!\n"); break;
-						case SDLK_RIGHT: printf("RIGHT!\n"); break;
+						case SDLK_ESCAPE:
+						case SDLK_q: deinitGame(&game); break;
+						default: break;
 					}
+					break;
+				case SDL_MOUSEMOTION:
+					mouse = (struct mouse){e.motion.x, e.motion.y};
 					break;
 				default: break;
 			}
 		}
-		// Render
-		SDL_SetRenderDrawColor(render, 0U, 0U, 0U, 255U);
-		SDL_RenderClear(render);
 
-		SDL_SetRenderDrawColor(render, 255U, 255U, 255U, 255U);
+		// Handle WASD / Arrow Keys
+		const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+		if(currentKeyStates[SDL_SCANCODE_UP])
+		{
+			printf("UP!\n");
+		}
+		else if(currentKeyStates[SDL_SCANCODE_DOWN])
+		{
+			printf("DOWN!\n");
+		}
+		else if(currentKeyStates[SDL_SCANCODE_LEFT])
+		{
+			printf("LEFT!\n");
+		}
+		else if(currentKeyStates[SDL_SCANCODE_RIGHT])
+		{
+			printf("RIGHT!\n");
+		}
+
+		SDL_Rect rect = (SDL_Rect){1 + GRID_W * (mouse.x / GRID_W),
+								   1 + GRID_W * (mouse.y / GRID_H),
+								   GRID_W - 1,
+								   GRID_H - 1};
+
+		SDL_SetRenderDrawColor(render, 86U, 92U, 72U, 255U);
+		SDL_RenderFillRect(render, &rect);
+
+		SDL_SetRenderDrawColor(render, 96U, 108U, 66U, 255U);
 		SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
 
 		SDL_RenderPresent(render);

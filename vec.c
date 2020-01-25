@@ -75,11 +75,14 @@ int vec_insert_(char **data, int *length, int *capacity, int memsz, int idx)
 	int err = vec_expand_(data, length, capacity, memsz);
 	if(err)
 		return err;
-	memmove(*data + (idx + 1) * memsz, *data + idx * memsz, (*length - idx) * memsz);
+	memmove(*data + (idx + 1) * memsz,
+			*data + idx * memsz,
+			(*length - idx) * memsz);
 	return 0;
 }
 
-void vec_splice_(char **data, int *length, int *capacity, int memsz, int start, int count)
+void vec_splice_(
+	char **data, int *length, int *capacity, int memsz, int start, int count)
 {
 	(void)capacity;
 	memmove(*data + start * memsz,
@@ -91,10 +94,13 @@ void vec_swapsplice_(
 	char **data, int *length, int *capacity, int memsz, int start, int count)
 {
 	(void)capacity;
-	memmove(*data + start * memsz, *data + (*length - count) * memsz, count * memsz);
+	memmove(*data + start * memsz,
+			*data + (*length - count) * memsz,
+			count * memsz);
 }
 
-void vec_swap_(char **data, int *length, int *capacity, int memsz, int idx1, int idx2)
+void vec_swap_(
+	char **data, int *length, int *capacity, int memsz, int idx1, int idx2)
 {
 	unsigned char *a, *b, tmp;
 	int count;
@@ -113,4 +119,3 @@ void vec_swap_(char **data, int *length, int *capacity, int memsz, int idx1, int
 		a++, b++;
 	}
 }
-
