@@ -108,7 +108,11 @@ bool qt_destroy(QuadTree* const qt)
 }
 
 // TODO subdivide
-void qt_subdivide(QuadTree* const qt) {}
+void qt_subdivide(QuadTree* const qt)
+{
+	QuadTree* a = (qt);
+	a = a;
+}
 
 bool qt_insert(QuadTree* const qt, const Point p)
 {
