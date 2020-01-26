@@ -51,16 +51,28 @@ int main(void)
 				"(%+06.2f, %+06.2f)\t", random_points[i].x, random_points[i].y);
 	}
 
+	printf("\n");
+
 	if(qt_init(&qt, quad_rect))
 	{
 		qt_insert(qt, random_points[0]);
 		qt_insert(qt, random_points[1]);
 		qt_insert(qt, random_points[2]);
+		qt_insert(qt, random_points[3]);
 
 		Rect query = makeRect(0.f, 0.f, 25.f, 25.f);
-		Point points[128U];
-		size_t num_of_points = 0ULL;
-		qt_getPointsInRect(qt, &query, points, &num_of_points);
+		vec_p_t points;
+		vec_init(&points);
+
+		qt_getPointsInRect(qt, &query, &points);
+		int i;
+		Point* point;
+		vec_foreach_ptr(&qt->points, point, i)
+		{
+			printf("(%+06.2f, %+06.2f)\t", point->x, point->y);
+		}
+
+		vec_deinit(&points);
 
 		qt_destroy(qt);
 	}

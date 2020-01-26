@@ -11,7 +11,7 @@
 #define center centre
 
 #ifndef BUCKET_SIZE
-#	define BUCKET_SIZE 4U
+#	define BUCKET_SIZE 4
 #endif
 
 float dist(float a, float b, float c, float d)
@@ -79,9 +79,7 @@ Point getCenterOfRect(Rect* const rect)
 
 typedef struct QuadTree
 {
-	/* Point points[BUCKET_SIZE]; */
 	vec_p_t points;
-	uint8_t num_of_points;
 	size_t total_points;
 
 	Rect boundary;
@@ -124,7 +122,7 @@ bool qt_destroy(QuadTree* const qt)
 	return true;
 }
 
-// TODO subdivide
+// TODO subdivide, move the items in the points vector to the correct children
 void qt_subdivide(QuadTree* const qt)
 {
 	QuadTree* a = (qt);
@@ -136,9 +134,9 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	if(!pointInRect(&p, &qt->boundary))
 		return false;
 
-	if(qt->num_of_points < BUCKET_SIZE && !qt->north_west)
+	if(qt->points.length < BUCKET_SIZE && !qt->north_west)
 	{
-		qt->points.data[qt->num_of_points++] = p;
+		vec_push(&qt->points, p);
 		return true;
 	}
 
@@ -157,27 +155,26 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	return false;
 }
 
-Point* qt_getPointsInRect(QuadTree* const qt,
-						  const Rect* const rect,
-						  Point points[],
-						  size_t* total_num_of_points)
+void qt_getPointsInRect(QuadTree* const qt,
+						const Rect* const rect,
+						vec_p_t* vec)
 {
 	if(!intersects(&qt->boundary, rect))
-		return points;
+		return;
 
-	for(uint8_t i = 0U; i < qt->num_of_points; ++i)
+	for(uint8_t i = 0U; i < qt->points.length; ++i)
 		if(pointInRect(&qt->points.data[i], rect))
-			points[(*total_num_of_points)++] = qt->points.data[i];
+			vec_push(vec, qt->points.data[i]);
 
 	if(!qt->north_west)
-		return points;
+		return;
 
-	qt_getPointsInRect(qt->north_west, rect, points, total_num_of_points);
-	qt_getPointsInRect(qt->north_east, rect, points, total_num_of_points);
-	qt_getPointsInRect(qt->south_west, rect, points, total_num_of_points);
-	qt_getPointsInRect(qt->south_east, rect, points, total_num_of_points);
+	qt_getPointsInRect(qt->north_west, rect, vec);
+	qt_getPointsInRect(qt->north_east, rect, vec);
+	qt_getPointsInRect(qt->south_west, rect, vec);
+	qt_getPointsInRect(qt->south_east, rect, vec);
 
-	return points;
+	return;
 }
 
 #endif
