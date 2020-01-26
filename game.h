@@ -34,11 +34,7 @@ enum state_t
 	OUTPUT
 };
 
-struct mouse
-{
-	int x;
-	int y;
-} mouse;
+SDL_Point mouse;
 
 typedef struct grid_t
 {
@@ -78,4 +74,24 @@ void deinitGame(game_t* game)
 			vec_deinit(&game->grid.grids[i][j].v);
 
 	game->state = QUITTING;
+}
+
+#define POINT_COUNT 1024U
+SDL_Point points[POINT_COUNT];
+
+void generatePoints(void)
+{
+	for(uint16_t i = 0; i < POINT_COUNT; ++i)
+	{
+		points[i] = (SDL_Point){rand() % WIDTH, rand() % HEIGHT};
+	}
+}
+
+void randomizePoints(void)
+{
+	for(uint16_t i = 0; i < POINT_COUNT; ++i)
+	{
+		points[i].x = rand() % WIDTH;
+		points[i].y = rand() % HEIGHT;
+	}
 }

@@ -4,6 +4,9 @@ int main(void)
 {
 	game_t game;
 	initGame(&game);
+	generatePoints();
+
+	bool draw_grid = true;
 
 	if(SDL_Init(SDL_INIT_VIDEO))
 	{
@@ -54,8 +57,16 @@ int main(void)
 						default: break;
 					}
 					break;
+				case SDL_KEYUP:
+					switch(e.key.keysym.sym)
+					{
+						case SDLK_r: randomizePoints(); break;
+						case SDLK_g: draw_grid = !draw_grid; break;
+						default: break;
+					}
+					break;
 				case SDL_MOUSEMOTION:
-					mouse = (struct mouse){e.motion.x, e.motion.y};
+					mouse = (SDL_Point){e.motion.x, e.motion.y};
 					break;
 				default: break;
 			}
@@ -80,16 +91,30 @@ int main(void)
 			printf("RIGHT!\n");
 		}
 
-		SDL_Rect rect = (SDL_Rect){1 + GRID_W * (mouse.x / GRID_W),
-								   1 + GRID_H * (mouse.y / GRID_H),
-								   GRID_W - 1,
-								   GRID_H - 1};
+		if(draw_grid)
+		{
+			SDL_Rect rect = (SDL_Rect){1 + GRID_W * (mouse.x / GRID_W),
+									   1 + GRID_H * (mouse.y / GRID_H),
+									   GRID_W - 1,
+									   GRID_H - 1};
 
-		SDL_SetRenderDrawColor(render, 72U, 82U, 64U, 255U);
-		SDL_RenderFillRect(render, &rect);
+			SDL_SetRenderDrawColor(render, 72U, 82U, 64U, 255U);
+			SDL_RenderFillRect(render, &rect);
+		}
 
-		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
-		SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
+		/* SDL_SetRenderDrawColor(render, 255U, 24U, 24U, 255U); */
+		/* SDL_RenderDrawPoints(render, points, POINT_COUNT); */
+		for(uint16_t i = 0U; i < POINT_COUNT; ++i)
+		{
+			filledCircleRGBA(
+				render, points[i].x, points[i].y, 3U, 255U, 24U, 24U, 255U);
+		}
+
+		if(draw_grid)
+		{
+			SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
+			SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
+		}
 
 		SDL_RenderPresent(render);
 	}

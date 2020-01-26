@@ -1,6 +1,8 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
+#include "vec.h"
+
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -29,10 +31,12 @@ typedef struct Rect
 	float w, h;
 } Rect;
 
+typedef vec_t(Point) vec_p_t;
+
 bool pointInRect(const Point* const p, const Rect* const r)
 {
-	return ((p->x >= r->origin.x) && (p->x < r->origin.x + r->w) && (p->y >= r->origin.y) &&
-			(p->y < r->origin.y + r->h));
+	return ((p->x >= r->origin.x) && (p->x < r->origin.x + r->w) &&
+			(p->y >= r->origin.y) && (p->y < r->origin.y + r->h));
 }
 
 bool intersects(const Rect* const r1, const Rect* const r2)
@@ -68,14 +72,15 @@ Rect makeRect(const float x, const float y, const float w, const float h)
 
 Point getCenterOfRect(Rect* const rect)
 {
-	rect->center =
-		makePoint(rect->origin.x + rect->w / 2.f, rect->origin.y + rect->h / 2.f);
+	rect->center = makePoint(rect->origin.x + rect->w / 2.f,
+							 rect->origin.y + rect->h / 2.f);
 	return rect->center;
 }
 
 typedef struct QuadTree
 {
-	Point points[BUCKET_SIZE];
+	/* Point points[BUCKET_SIZE]; */
+	vec_p_t points;
 	uint8_t num_of_points;
 	size_t total_points;
 
@@ -93,6 +98,8 @@ bool qt_init(QuadTree** qt, const Rect rect)
 	if(temp)
 	{
 		temp->boundary = rect;
+		vec_init(&temp->points);
+		vec_reserve(&temp->points, BUCKET_SIZE);
 		*qt = temp;
 		return true;
 	}
@@ -101,8 +108,18 @@ bool qt_init(QuadTree** qt, const Rect rect)
 
 bool qt_destroy(QuadTree* const qt)
 {
-	// TODO Iterate over the children until one of them is NULL and free at each step, just
-	// recurse through it.
+	// TODO Iterate over the children until one of them is NULL and free at each
+	// step, just recurse through it.
+	vec_deinit(&qt->points);
+	if(!qt->north_west)
+	{
+		free(qt);
+		return true;
+	}
+	qt_destroy(qt->north_west);
+	qt_destroy(qt->north_east);
+	qt_destroy(qt->south_west);
+	qt_destroy(qt->south_east);
 	free(qt);
 	return true;
 }
@@ -121,7 +138,7 @@ bool qt_insert(QuadTree* const qt, const Point p)
 
 	if(qt->num_of_points < BUCKET_SIZE && !qt->north_west)
 	{
-		qt->points[qt->num_of_points++] = p;
+		qt->points.data[qt->num_of_points++] = p;
 		return true;
 	}
 
@@ -149,8 +166,8 @@ Point* qt_getPointsInRect(QuadTree* const qt,
 		return points;
 
 	for(uint8_t i = 0U; i < qt->num_of_points; ++i)
-		if(pointInRect(&qt->points[i], rect))
-			points[(*total_num_of_points)++] = qt->points[i];
+		if(pointInRect(&qt->points.data[i], rect))
+			points[(*total_num_of_points)++] = qt->points.data[i];
 
 	if(!qt->north_west)
 		return points;
@@ -164,4 +181,3 @@ Point* qt_getPointsInRect(QuadTree* const qt,
 }
 
 #endif
-

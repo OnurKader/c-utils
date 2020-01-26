@@ -38,15 +38,17 @@ int main(void)
 	QuadTree* qt = NULL;
 	const Rect quad_rect = makeRect(-50.f, -50.f, 100.f, 100.f);
 
-	Point random_points[51];
-	for(uint8_t i = 0U; i < 51; ++i)
+	Point random_points[52];
+	for(uint8_t i = 0U; i < 52; ++i)
 	{
-		random_points[i] = makePoint((rand() % 100000 / 100000.f * 100.f) - 50.f,
-									 (rand() % 100000 / 100000.f * 100.f) - 50.f);
-		if(i % 3 == 2)
-			printf("(%+06.2f, %+06.2f)\n", random_points[i].x, random_points[i].y);
+		random_points[i] = makePoint((rand() % 10000 / 10000.f * 100.f) - 50.f,
+									 (rand() % 10000 / 10000.f * 100.f) - 50.f);
+		if(i % 4 == 3)
+			printf(
+				"(%+06.2f, %+06.2f)\n", random_points[i].x, random_points[i].y);
 		else
-			printf("(%+06.2f, %+06.2f)\t", random_points[i].x, random_points[i].y);
+			printf(
+				"(%+06.2f, %+06.2f)\t", random_points[i].x, random_points[i].y);
 	}
 
 	if(qt_init(&qt, quad_rect))
@@ -65,4 +67,3 @@ int main(void)
 
 	return 0;
 }
-
