@@ -2,21 +2,6 @@
 
 // Define an SDL_FRect vector
 typedef vec_t(SDL_FRect) vec_frect_t;
-typedef vec_t(SDL_Rect) vec_rect_t;
-
-// Function to update the rendered rectangles
-void updateQTGrid(vec_rect_t* vec, vec_frect_t* f_vec)
-{
-	if(!vec || !f_vec)
-		return;
-
-	for(uint32_t i = 0U; i < f_vec->length; ++i)
-	{
-		SDL_Rect temp = (SDL_Rect){
-			f_vec->data[i].x, f_vec->data[i].y, f_vec->data[i].w, f_vec->data[i].h};
-		vec_push(vec, temp);
-	}
-}
 
 // Function to get the rectangular boundaries from QT and put them into a SDL_FRect vector
 void getFRect(vec_frect_t* const vec, QuadTree* const qt)
@@ -35,7 +20,7 @@ void getFRect(vec_frect_t* const vec, QuadTree* const qt)
 	getFRect(vec, qt->south_east);
 }
 
-void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* point_array)
+void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* const point_array)
 {
 	for(uint32_t i = 0U; i < POINT_COUNT; ++i)
 	{
@@ -52,17 +37,15 @@ int main(void)
 		exit(1);
 	}
 
+	printf("\033[3J\033[2J\033[H");
+
 	game_t game;
 	initGame(&game);
 	generatePoints();
 
 	vec_frect_t qt_frect_vec;
 	vec_init(&qt_frect_vec);
-	vec_reserve(&qt_frect_vec, 64U);
-
-	vec_rect_t qt_rect_vec;
-	vec_init(&qt_rect_vec);
-	vec_reserve(&qt_rect_vec, 64U);
+	vec_reserve(&qt_frect_vec, 1024U);
 
 	bool draw_grid = false;
 
@@ -118,8 +101,6 @@ int main(void)
 						{
 							insertPointsIntoQT(game.qt, points);
 							getFRect(&qt_frect_vec, game.qt);
-							updateQTGrid(&qt_rect_vec, &qt_frect_vec);
-
 							break;
 						}
 						default: break;
@@ -176,12 +157,12 @@ int main(void)
 
 		// QT Grid Stuff
 		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 120U);
-		SDL_RenderDrawRects(render, qt_rect_vec.data, qt_rect_vec.length);
+		SDL_RenderDrawRectsF(render, qt_frect_vec.data, qt_frect_vec.length);
 
 		SDL_RenderPresent(render);
 	}
 
-	vec_deinit(&qt_rect_vec);
+	vec_deinit(&qt_frect_vec);
 
 	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);

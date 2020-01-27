@@ -103,7 +103,7 @@ uint64_t oof = 0UL;
 
 bool qt_subdivide(QuadTree* const qt)
 {
-	printf("\033[6;1HSubdivide: %lu\n", ++oof);
+	printf("\033[2;1HSubdivide: %lu   \n", ++oof);
 	if(qt->north_west)
 	{
 		qt_subdivide(qt->north_west);
@@ -158,7 +158,7 @@ uint64_t woah = 0UL;
 
 bool qt_insert(QuadTree* const qt, const Point p)
 {
-	printf("\033[5;1HInsert: %lu   ", ++woah);
+	printf("\033[1;1HInsert: %lu    \n", ++woah);
 	if(!pointInRect(&p, &qt->boundary))
 		return false;
 

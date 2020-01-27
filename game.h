@@ -13,8 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-/* #define WIDTH  (1280) */
-#define WIDTH  (720)
+#define WIDTH  (1280)
 #define HEIGHT (720)
 
 #define GRID_W (40)
@@ -67,7 +66,7 @@ void initGame(game_t* game)
 	game->state = RUNNING;
 	game->qt = NULL;
 	// TODO Change the first HEIGHT to WIDTH
-	const Rect qt_rect = makeRect(0.f, 0.f, HEIGHT, HEIGHT);
+	const Rect qt_rect = makeRect(0.f, 0.f, WIDTH, HEIGHT);
 	if(!qt_init(&game->qt, qt_rect))
 	{
 		fprintf(stderr, "Couldn't Create QuadTree\n");
