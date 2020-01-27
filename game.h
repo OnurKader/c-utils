@@ -13,18 +13,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define WIDTH  (1280U)
-#define HEIGHT (720U)
+#define WIDTH  (1280)
+#define HEIGHT (720)
 
-#define GRID_W (40U)
-#define GRID_H (40U)
+#define GRID_W (40)
+#define GRID_H (40)
 
 #define GRID_ROW (HEIGHT / GRID_H)
 #define GRID_COL (WIDTH / GRID_W)
 
 #define GRID_LENGTH (GRID_COL * GRID_ROW)
-
-typedef vec_t(Point) vec_point_t;
 
 enum state_t
 {
@@ -51,6 +49,7 @@ typedef struct game_t
 {
 	enum state_t state;
 	struct Grid grid;
+	struct QuadTree* qt;
 } game_t;
 
 void initGame(game_t* game)
@@ -65,6 +64,14 @@ void initGame(game_t* game)
 		}
 
 	game->state = RUNNING;
+	game->qt = NULL;
+	// TODO Change the first HEIGHT to WIDTH
+	const Rect qt_rect = makeRect(0.f, 0.f, HEIGHT, HEIGHT);
+	if(!qt_init(&game->qt, qt_rect))
+	{
+		fprintf(stderr, "Couldn't Create QuadTree\n");
+		exit(1);
+	}
 }
 
 void deinitGame(game_t* game)
@@ -74,6 +81,7 @@ void deinitGame(game_t* game)
 			vec_deinit(&game->grid.grids[i][j].v);
 
 	game->state = QUITTING;
+	qt_destroy(game->qt);
 }
 
 #define POINT_COUNT 1024U
@@ -95,3 +103,4 @@ void randomizePoints(void)
 		points[i].y = rand() % HEIGHT;
 	}
 }
+

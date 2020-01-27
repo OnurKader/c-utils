@@ -3,52 +3,39 @@
 
 #include "vec.h"
 
+#include <SDL2/SDL_shape.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#define center centre
-
 #ifndef BUCKET_SIZE
 #	define BUCKET_SIZE 4
 #endif
 
-float dist(float a, float b, float c, float d)
-{
-	return sqrtf((a - c) * (a - c) + (b - d) * (b - d));
-}
+typedef SDL_FPoint Point;
 
-typedef struct Point
-{
-	float x, y;
-} Point;
-
-typedef struct Rect
-{
-	Point origin;
-	Point center;
-	float w, h;
-} Rect;
+typedef SDL_FRect Rect;
 
 typedef vec_t(Point) vec_p_t;
+typedef vec_t(Point) vec_point_t;
 
 bool pointInRect(const Point* const p, const Rect* const r)
 {
-	return ((p->x >= r->origin.x) && (p->x < r->origin.x + r->w) && (p->y >= r->origin.y) &&
-			(p->y < r->origin.y + r->h));
+	return ((p->x >= r->x) && (p->x < r->x + r->w) && (p->y >= r->y) &&
+			(p->y < r->y + r->h));
 }
 
 bool intersects(const Rect* const r1, const Rect* const r2)
 {
-	if(r1->origin.x + r1->w < r2->origin.x)	   // r1 is left of r2
+	if(r1->x + r1->w < r2->x)	 // r1 is left of r2
 		return false;
-	if(r1->origin.x > r2->origin.x + r2->w)	   // r1 is right of r2
+	if(r1->x > r2->x + r2->w)	 // r1 is right of r2
 		return false;
 
-	if(r1->origin.y + r1->h < r2->origin.y)	   // r1 is above r2
+	if(r1->y + r1->h < r2->y)	 // r1 is above r2
 		return false;
-	if(r1->origin.y > r2->origin.y + r2->h)	   // r1 is below r2
+	if(r1->y > r2->y + r2->h)	 // r1 is below r2
 		return false;
 
 	return true;
@@ -59,22 +46,11 @@ Point makePoint(float x, float y) { return (Point){x, y}; }
 Rect makeRect(const float x, const float y, const float w, const float h)
 {
 	Rect temp;
-	temp.origin.x = x;
-	temp.origin.y = y;
+	temp.x = x;
+	temp.y = y;
 	temp.w = w;
 	temp.h = h;
-	temp.center.x = x + w / 2.f;
-	temp.center.y = y + h / 2.f;
 	return temp;
-}
-
-#define getCentreOfRect getCenterOfRect
-
-Point getCenterOfRect(Rect* const rect)
-{
-	rect->center =
-		makePoint(rect->origin.x + rect->w / 2.f, rect->origin.y + rect->h / 2.f);
-	return rect->center;
 }
 
 typedef struct QuadTree
@@ -128,23 +104,18 @@ void qt_subdivide(QuadTree* const qt)
 	if(qt->north_west)
 		return;
 
-	// Just so I can use ->center instead of ->origin +- ->w/2 || ->h/2
-	getCenterOfRect(&qt->boundary);
-
 	Rect rect;
-	rect = makeRect(qt->boundary.origin.x,
-					qt->boundary.origin.y,
-					qt->boundary.w / 2.f,
-					qt->boundary.h / 2.f);
+	rect = makeRect(
+		qt->boundary.x, qt->boundary.y, qt->boundary.w / 2.f, qt->boundary.h / 2.f);
 
 	qt_init(&qt->north_west, rect);
-	rect.origin.x = qt->boundary.center.x;
+	rect.x = qt->boundary.x + qt->boundary.w / 2.f;
 	qt_init(&qt->north_east, rect);
-	rect.origin.x = qt->boundary.origin.x;
-	rect.origin.y = qt->boundary.center.y;
+	rect.x = qt->boundary.x;
+	rect.y = qt->boundary.y + qt->boundary.h / 2.f;
 	qt_init(&qt->south_west, rect);
-	rect.origin.x = qt->boundary.center.x;
-	rect.origin.y = qt->boundary.center.y;
+	rect.x = qt->boundary.x + qt->boundary.w / 2.f;
+	rect.y = qt->boundary.y + qt->boundary.h / 2.f;
 	qt_init(&qt->south_east, rect);
 
 	// After initializing the children 4 nodes, put the data in qt->points to
@@ -217,3 +188,4 @@ void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* vec
 }
 
 #endif
+
