@@ -99,10 +99,18 @@ bool qt_destroy(QuadTree* qt)
 
 bool qt_insert(QuadTree* const, const Point);
 
+uint64_t oof = 0UL;
+
 bool qt_subdivide(QuadTree* const qt)
 {
+	printf("\033[6;1HSubdivide: %lu\n", ++oof);
 	if(qt->north_west)
-		return false;
+	{
+		qt_subdivide(qt->north_west);
+		qt_subdivide(qt->north_east);
+		qt_subdivide(qt->south_west);
+		qt_subdivide(qt->south_east);
+	}
 
 	Rect rect;
 	rect = makeRect(
@@ -146,8 +154,11 @@ bool qt_subdivide(QuadTree* const qt)
 	return true;
 }
 
+uint64_t woah = 0UL;
+
 bool qt_insert(QuadTree* const qt, const Point p)
 {
+	printf("\033[5;1HInsert: %lu   ", ++woah);
 	if(!pointInRect(&p, &qt->boundary))
 		return false;
 
@@ -158,6 +169,7 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	}
 
 	if(!qt->north_west)
+	{
 		if(qt_subdivide(qt))
 		{
 			if(qt_insert(qt->north_west, p))
@@ -169,6 +181,18 @@ bool qt_insert(QuadTree* const qt, const Point p)
 			if(qt_insert(qt->south_east, p))
 				return true;
 		}
+	}
+	else
+	{
+		if(qt_insert(qt->north_west, p))
+			return true;
+		if(qt_insert(qt->north_east, p))
+			return true;
+		if(qt_insert(qt->south_west, p))
+			return true;
+		if(qt_insert(qt->south_east, p))
+			return true;
+	}
 
 	return false;
 }

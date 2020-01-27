@@ -88,6 +88,8 @@ int main(void)
 		exit(1);
 	}
 
+	SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
+
 	while(game.state != QUITTING)
 	{
 		SDL_SetRenderDrawColor(render, 12U, 12U, 32U, 255U);
@@ -158,11 +160,14 @@ int main(void)
 			SDL_RenderFillRect(render, &rect);
 		}
 
+		/* SDL_SetRenderDrawColor(render, 255U, 24U, 24U, 254U); */
+		/* SDL_RenderDrawPoints(render, points, POINT_COUNT); */
 		for(uint16_t i = 0U; i < POINT_COUNT; ++i)
 		{
-			filledCircleRGBA(render, points[i].x, points[i].y, 3U, 255U, 24U, 24U, 255U);
+			filledCircleRGBA(render, points[i].x, points[i].y, 1U, 255U, 24U, 24U, 222U);
 		}
 
+		// TODO FIXME Change RenderDrawRects to RenderDrawRectsF or smth
 		if(draw_grid)
 		{
 			SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
@@ -170,7 +175,7 @@ int main(void)
 		}
 
 		// QT Grid Stuff
-		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
+		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 120U);
 		SDL_RenderDrawRects(render, qt_rect_vec.data, qt_rect_vec.length);
 
 		SDL_RenderPresent(render);
