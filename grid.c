@@ -37,6 +37,8 @@ int main(void)
 		exit(1);
 	}
 
+	gfxPrimitivesSetFont(NULL, 8U, 8U);
+
 	while(game.state != QUITTING)
 	{
 		/* SDL_SetRenderDrawColor(render, 0U, 0U, 0U, 255U); */

@@ -104,29 +104,67 @@ bool qt_init(QuadTree** qt, const Rect rect)
 	return false;
 }
 
-bool qt_destroy(QuadTree* const qt)
+bool qt_destroy(QuadTree* qt)
 {
-	// TODO Iterate over the children until one of them is NULL and free at each
-	// step, just recurse through it.
 	vec_deinit(&qt->points);
 	if(!qt->north_west)
 	{
 		free(qt);
+		qt = NULL;
 		return true;
 	}
 	qt_destroy(qt->north_west);
 	qt_destroy(qt->north_east);
 	qt_destroy(qt->south_west);
 	qt_destroy(qt->south_east);
-	free(qt);
 	return true;
 }
 
 // TODO subdivide, move the items in the points vector to the correct children
 void qt_subdivide(QuadTree* const qt)
 {
-	QuadTree* a = (qt);
-	a = a;
+	if(qt->north_west)
+		return;
+
+	getCenterOfRect(&qt->boundary);
+
+	Rect rect;
+	rect = makeRect(qt->boundary.origin.x,
+					qt->boundary.origin.y,
+					qt->boundary.w / 2.f,
+					qt->boundary.h / 2.f);
+
+	qt_init(&qt->north_west, rect);
+	&qt->points.data[i] rect.origin.x = qt->boundary.center.x;
+	qt_init(&qt->north_east, rect);
+	rect.origin.x = qt->boundary.origin.x;
+	rect.origin.y = qt->boundary.center.y;
+	qt_init(&qt->south_west, rect);
+	rect.origin.x = qt->boundary.center.x;
+	rect.origin.y = qt->boundary.center.y;
+	qt_init(&qt->south_east, rect);
+
+	// After initializing the children 4 nodes, put the data in qt->points to
+	// the correct nodes.
+	for(uint8_t i = 0U; i < BUCKET_SIZE; ++i)
+	{
+		if(qt_insert(&qt->north_west->boundary, qt->points.data[i]))
+		{
+			vec_splice(&qt->points, i, 1);
+		}
+		else if(qt_insert(&qt->north_east->boundary, qt->points.data[i]))
+		{
+			vec_splice(&qt->points, i, 1);
+		}
+		else if(qt_insert(&qt->south_west->boundary, qt->points.data[i]))
+		{
+			vec_splice(&qt->points, i, 1);
+		}
+		else if(qt_insert(&qt->south_east->boundary, qt->points.data[i]))
+		{
+			vec_splice(&qt->points, i, 1);
+		}
+	}
 }
 
 bool qt_insert(QuadTree* const qt, const Point p)
