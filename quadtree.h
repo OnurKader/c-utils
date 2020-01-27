@@ -35,8 +35,8 @@ typedef vec_t(Point) vec_p_t;
 
 bool pointInRect(const Point* const p, const Rect* const r)
 {
-	return ((p->x >= r->origin.x) && (p->x < r->origin.x + r->w) &&
-			(p->y >= r->origin.y) && (p->y < r->origin.y + r->h));
+	return ((p->x >= r->origin.x) && (p->x < r->origin.x + r->w) && (p->y >= r->origin.y) &&
+			(p->y < r->origin.y + r->h));
 }
 
 bool intersects(const Rect* const r1, const Rect* const r2)
@@ -72,8 +72,8 @@ Rect makeRect(const float x, const float y, const float w, const float h)
 
 Point getCenterOfRect(Rect* const rect)
 {
-	rect->center = makePoint(rect->origin.x + rect->w / 2.f,
-							 rect->origin.y + rect->h / 2.f);
+	rect->center =
+		makePoint(rect->origin.x + rect->w / 2.f, rect->origin.y + rect->h / 2.f);
 	return rect->center;
 }
 
@@ -120,6 +120,8 @@ bool qt_destroy(QuadTree* qt)
 	return true;
 }
 
+bool qt_insert(QuadTree* const, const Point);
+
 // TODO subdivide, move the items in the points vector to the correct children
 void qt_subdivide(QuadTree* const qt)
 {
@@ -135,7 +137,7 @@ void qt_subdivide(QuadTree* const qt)
 					qt->boundary.h / 2.f);
 
 	qt_init(&qt->north_west, rect);
-	&qt->points.data[i] rect.origin.x = qt->boundary.center.x;
+	rect.origin.x = qt->boundary.center.x;
 	qt_init(&qt->north_east, rect);
 	rect.origin.x = qt->boundary.origin.x;
 	rect.origin.y = qt->boundary.center.y;
@@ -148,19 +150,19 @@ void qt_subdivide(QuadTree* const qt)
 	// the correct nodes.
 	for(uint8_t i = 0U; i < BUCKET_SIZE; ++i)
 	{
-		if(qt_insert(&qt->north_west->boundary, qt->points.data[i]))
+		if(qt_insert(qt->north_west, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
 		}
-		else if(qt_insert(&qt->north_east->boundary, qt->points.data[i]))
+		else if(qt_insert(qt->north_east, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
 		}
-		else if(qt_insert(&qt->south_west->boundary, qt->points.data[i]))
+		else if(qt_insert(qt->south_west, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
 		}
-		else if(qt_insert(&qt->south_east->boundary, qt->points.data[i]))
+		else if(qt_insert(qt->south_east, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
 		}
@@ -193,9 +195,7 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	return false;
 }
 
-void qt_getPointsInRect(QuadTree* const qt,
-						const Rect* const rect,
-						vec_p_t* vec)
+void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* vec)
 {
 	if(!intersects(&qt->boundary, rect))
 		return;
