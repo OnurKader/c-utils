@@ -19,7 +19,7 @@ void updateQTGrid(vec_rect_t* vec, vec_frect_t* f_vec)
 }
 
 // Function to get the rectangular boundaries from QT and put them into a SDL_FRect vector
-void getFRect(vec_frect_t* vec, QuadTree* qt)
+void getFRect(vec_frect_t* const vec, QuadTree* const qt)
 {
 	if(!qt)
 		return;
@@ -33,6 +33,15 @@ void getFRect(vec_frect_t* vec, QuadTree* qt)
 	getFRect(vec, qt->north_east);
 	getFRect(vec, qt->south_west);
 	getFRect(vec, qt->south_east);
+}
+
+void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* point_array)
+{
+	for(uint32_t i = 0U; i < POINT_COUNT; ++i)
+	{
+		Point p = makePoint(point_array[i].x, point_array[i].y);
+		qt_insert(qt, p);
+	}
 }
 
 int main(void)
@@ -54,9 +63,6 @@ int main(void)
 	vec_rect_t qt_rect_vec;
 	vec_init(&qt_rect_vec);
 	vec_reserve(&qt_rect_vec, 64U);
-
-	getFRect(&qt_frect_vec, game.qt);
-	updateQTGrid(&qt_rect_vec, &qt_frect_vec);
 
 	bool draw_grid = false;
 
@@ -106,6 +112,14 @@ int main(void)
 					{
 						case SDLK_r: randomizePoints(); break;
 						case SDLK_g: draw_grid = !draw_grid; break;
+						case SDLK_i:
+						{
+							insertPointsIntoQT(game.qt, points);
+							getFRect(&qt_frect_vec, game.qt);
+							updateQTGrid(&qt_rect_vec, &qt_frect_vec);
+
+							break;
+						}
 						default: break;
 					}
 					break;

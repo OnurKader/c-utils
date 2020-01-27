@@ -55,7 +55,6 @@ Rect makeRect(const float x, const float y, const float w, const float h)
 typedef struct QuadTree
 {
 	vec_p_t points;
-	size_t total_points;
 
 	Rect boundary;
 
@@ -73,10 +72,13 @@ bool qt_init(QuadTree** qt, const Rect rect)
 		temp->boundary = rect;
 		vec_init(&temp->points);
 		vec_reserve(&temp->points, BUCKET_SIZE);
+		temp->north_west = NULL;
+		temp->north_east = NULL;
+		temp->south_west = NULL;
+		temp->south_east = NULL;
 		*qt = temp;
 		return true;
 	}
-	*qt = NULL;
 	return false;
 }
 
@@ -97,10 +99,10 @@ bool qt_destroy(QuadTree* qt)
 
 bool qt_insert(QuadTree* const, const Point);
 
-void qt_subdivide(QuadTree* const qt)
+bool qt_subdivide(QuadTree* const qt)
 {
 	if(qt->north_west)
-		return;
+		return false;
 
 	Rect rect;
 	rect = makeRect(
@@ -118,25 +120,30 @@ void qt_subdivide(QuadTree* const qt)
 
 	// After initializing the children 4 nodes, put the data in qt->points to
 	// the correct nodes.
-	for(uint8_t i = 0U; i < BUCKET_SIZE; ++i)
+	for(uint8_t i = 0U; i < qt->points.length; ++i)
 	{
 		if(qt_insert(qt->north_west, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
+			--i;
 		}
 		else if(qt_insert(qt->north_east, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
+			--i;
 		}
 		else if(qt_insert(qt->south_west, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
+			--i;
 		}
 		else if(qt_insert(qt->south_east, qt->points.data[i]))
 		{
 			vec_splice(&qt->points, i, 1);
+			--i;
 		}
 	}
+	return true;
 }
 
 bool qt_insert(QuadTree* const qt, const Point p)
@@ -151,16 +158,17 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	}
 
 	if(!qt->north_west)
-		qt_subdivide(qt);
-
-	if(qt_insert(qt->north_west, p))
-		return true;
-	if(qt_insert(qt->north_east, p))
-		return true;
-	if(qt_insert(qt->south_west, p))
-		return true;
-	if(qt_insert(qt->south_east, p))
-		return true;
+		if(qt_subdivide(qt))
+		{
+			if(qt_insert(qt->north_west, p))
+				return true;
+			if(qt_insert(qt->north_east, p))
+				return true;
+			if(qt_insert(qt->south_west, p))
+				return true;
+			if(qt_insert(qt->south_east, p))
+				return true;
+		}
 
 	return false;
 }
