@@ -13,7 +13,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define WIDTH  (1280)
+/* #define WIDTH  (1280) */
+#define WIDTH  (720)
 #define HEIGHT (720)
 
 #define GRID_W (40)

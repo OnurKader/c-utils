@@ -23,21 +23,31 @@ void getFRect(vec_frect_t* vec, QuadTree* qt)
 {
 	if(!qt)
 		return;
-	if(!qt->north_west)
-	{
-		return;
-	}
+
 	vec_push(vec, qt->boundary);
-	;
+
+	if(!qt->north_west)
+		return;
+
+	getFRect(vec, qt->north_west);
+	getFRect(vec, qt->north_east);
+	getFRect(vec, qt->south_west);
+	getFRect(vec, qt->south_east);
 }
 
 int main(void)
 {
+	if(SDL_Init(SDL_INIT_VIDEO))
+	{
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+
 	game_t game;
 	initGame(&game);
 	generatePoints();
 
-	vec_rect_t qt_frect_vec;
+	vec_frect_t qt_frect_vec;
 	vec_init(&qt_frect_vec);
 	vec_reserve(&qt_frect_vec, 64U);
 
@@ -45,13 +55,10 @@ int main(void)
 	vec_init(&qt_rect_vec);
 	vec_reserve(&qt_rect_vec, 64U);
 
-	bool draw_grid = false;
+	getFRect(&qt_frect_vec, game.qt);
+	updateQTGrid(&qt_rect_vec, &qt_frect_vec);
 
-	if(SDL_Init(SDL_INIT_VIDEO))
-	{
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
+	bool draw_grid = false;
 
 	SDL_Window* window = SDL_CreateWindow("Grid Particle System",
 										  SDL_WINDOWPOS_UNDEFINED,

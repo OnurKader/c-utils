@@ -14,7 +14,6 @@
 #endif
 
 typedef SDL_FPoint Point;
-
 typedef SDL_FRect Rect;
 
 typedef vec_t(Point) vec_p_t;
@@ -87,7 +86,6 @@ bool qt_destroy(QuadTree* qt)
 	if(!qt->north_west)
 	{
 		free(qt);
-		qt = NULL;
 		return true;
 	}
 	qt_destroy(qt->north_west);
