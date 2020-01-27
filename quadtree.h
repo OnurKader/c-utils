@@ -101,6 +101,7 @@ bool qt_init(QuadTree** qt, const Rect rect)
 		*qt = temp;
 		return true;
 	}
+	*qt = NULL;
 	return false;
 }
 
@@ -122,12 +123,12 @@ bool qt_destroy(QuadTree* qt)
 
 bool qt_insert(QuadTree* const, const Point);
 
-// TODO subdivide, move the items in the points vector to the correct children
 void qt_subdivide(QuadTree* const qt)
 {
 	if(qt->north_west)
 		return;
 
+	// Just so I can use ->center instead of ->origin +- ->w/2 || ->h/2
 	getCenterOfRect(&qt->boundary);
 
 	Rect rect;
