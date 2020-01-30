@@ -88,13 +88,13 @@ void deinitGame(game_t* game)
 }
 
 #define POINT_COUNT 1024U
-SDL_Point points[POINT_COUNT];
+SDL_FPoint points[POINT_COUNT];
 
 void generatePoints(void)
 {
 	for(uint16_t i = 0; i < POINT_COUNT; ++i)
 	{
-		points[i] = (SDL_Point){rand() % WIDTH, rand() % HEIGHT};
+		points[i] = (SDL_FPoint){rand() % WIDTH + 0.f, rand() % HEIGHT + 0.f};
 	}
 }
 

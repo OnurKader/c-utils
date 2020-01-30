@@ -21,12 +21,11 @@ void getFRect(vec_frect_t* const vec, QuadTree* const qt)
 	getFRect(vec, qt->south_east);
 }
 
-void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* const point_array)
+void insertPointsIntoQT(QuadTree* const qt, const SDL_FPoint* const point_array)
 {
 	for(uint32_t i = 0U; i < POINT_COUNT; ++i)
 	{
-		Point p = makePoint(point_array[i].x, point_array[i].y);
-		qt_insert(qt, p);
+		qt_insert(qt, point_array[i]);
 	}
 }
 
@@ -149,13 +148,12 @@ int main(void)
 		}
 
 		/* SDL_SetRenderDrawColor(render, 255U, 24U, 24U, 254U); */
-		/* SDL_RenderDrawPoints(render, points, POINT_COUNT); */
+		/* SDL_RenderDrawPointsF(render, points, POINT_COUNT); */
 		for(uint16_t i = 0U; i < POINT_COUNT; ++i)
 		{
 			filledCircleRGBA(render, points[i].x, points[i].y, 1U, 255U, 24U, 24U, 222U);
 		}
 
-		// TODO FIXME Change RenderDrawRects to RenderDrawRectsF or smth
 		if(draw_grid)
 		{
 			SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
