@@ -4,14 +4,15 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-BUCKET_SIZE	quadtree.h	14;"	d
-GRID_COL	game.h	23;"	d
-GRID_H	game.h	20;"	d
-GRID_LENGTH	game.h	25;"	d
-GRID_ROW	game.h	22;"	d
-GRID_W	game.h	19;"	d
-Grid	game.h	/^struct Grid$/;"	s
-HEIGHT	game.h	17;"	d
+BUCKET_SIZE	quadtree.h	13;"	d
+Circle	quadtree.h	/^} Circle;$/;"	t	typeref:struct:__anon1
+GAME_H	game.h	2;"	d
+GRID_COL	game.h	24;"	d
+GRID_H	game.h	21;"	d
+GRID_LENGTH	game.h	26;"	d
+GRID_ROW	game.h	23;"	d
+GRID_W	game.h	20;"	d
+HEIGHT	game.h	18;"	d
 INPUT	game.h	/^	INPUT,$/;"	e	enum:state_t
 List	doub_link_list.h	/^typedef struct List$/;"	s
 List	doub_link_list.h	/^} List;$/;"	t	typeref:struct:List
@@ -19,37 +20,32 @@ MAX_LIST_LENGTH	doub_link_list.h	8;"	d
 Node	doub_link_list.h	/^typedef struct Node$/;"	s
 Node	doub_link_list.h	/^} Node;$/;"	t	typeref:struct:Node
 OUTPUT	game.h	/^	OUTPUT$/;"	e	enum:state_t
-POINT_COUNT	game.h	79;"	d
-Point	quadtree.h	/^typedef struct Point$/;"	s
-Point	quadtree.h	/^} Point;$/;"	t	typeref:struct:Point
+POINT_COUNT	game.h	90;"	d
+Point	quadtree.h	/^typedef SDL_FPoint Point;$/;"	t
 QUADTREE_H	quadtree.h	2;"	d
+QUERY	grid.c	3;"	d	file:
 QUITTING	game.h	/^	QUITTING,$/;"	e	enum:state_t
 QuadTree	quadtree.h	/^typedef struct QuadTree$/;"	s
 QuadTree	quadtree.h	/^} QuadTree;$/;"	t	typeref:struct:QuadTree
 RUNNING	game.h	/^	RUNNING,$/;"	e	enum:state_t
-Rect	quadtree.h	/^typedef struct Rect$/;"	s
-Rect	quadtree.h	/^} Rect;$/;"	t	typeref:struct:Rect
+Rect	quadtree.h	/^typedef SDL_FRect Rect;$/;"	t
 VEC_H	vec.h	11;"	d
 VEC_VERSION	vec.h	16;"	d
-WIDTH	game.h	16;"	d
+WIDTH	game.h	17;"	d
 boundary	quadtree.h	/^	Rect boundary;$/;"	m	struct:QuadTree
-center	quadtree.h	/^	Point center;$/;"	m	struct:Rect
-center	quadtree.h	11;"	d
+count	quadtree.h	/^uint32_t count = 0U;$/;"	v
 deinitGame	game.h	/^void deinitGame(game_t* game)$/;"	f
-dist	quadtree.h	/^float dist(float a, float b, float c, float d)$/;"	f
+dist	quadtree.h	/^float dist(float x, float y, float z, float w)$/;"	f
 elem	doub_link_list.h	/^	int64_t elem;$/;"	m	struct:Node
 game_t	game.h	/^typedef struct game_t$/;"	s
 game_t	game.h	/^} game_t;$/;"	t	typeref:struct:game_t
 generatePoints	game.h	/^void generatePoints(void)$/;"	f
-getCenterOfRect	quadtree.h	/^Point getCenterOfRect(Rect* const rect)$/;"	f
-getCentreOfRect	quadtree.h	71;"	d
-grid	game.h	/^	struct Grid grid;$/;"	m	struct:game_t	typeref:struct:game_t::Grid
-grid_t	game.h	/^typedef struct grid_t$/;"	s
-grid_t	game.h	/^} grid_t;$/;"	t	typeref:struct:grid_t
-grids	game.h	/^	grid_t grids[GRID_ROW][GRID_COL];$/;"	m	struct:Grid
-h	quadtree.h	/^	float w, h;$/;"	m	struct:Rect
+getFPS	grid.c	/^Uint32 getFPS(Uint32 start, Uint32 end)$/;"	f
+getFRect	grid.c	/^void getFRect(vec_frect_t* const vec, QuadTree* const qt)$/;"	f
 head	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
 initGame	game.h	/^void initGame(game_t* game)$/;"	f
+insertPointsIntoQT	grid.c	/^void insertPointsIntoQT(QuadTree* const qt, const SDL_FPoint* const point_array)$/;"	f
+intersectCircle	quadtree.h	/^bool intersectCircle(const Rect* const _r, const Circle* const c)$/;"	f
 intersects	quadtree.h	/^bool intersects(const Rect* const r1, const Rect* const r2)$/;"	f
 length	doub_link_list.h	/^	size_t length;$/;"	m	struct:List
 list_createNode	doub_link_list.h	/^Node* list_createNode(int64_t num)$/;"	f
@@ -63,31 +59,32 @@ list_push	doub_link_list.h	/^int8_t list_push(List* list, int64_t num)$/;"	f
 list_remove	doub_link_list.h	/^int64_t list_remove(List* list, size_t index)$/;"	f
 main	grid.c	/^int main(void)$/;"	f
 main	main.c	/^int main(void)$/;"	f
-makePoint	quadtree.h	/^Point makePoint(float x, float y) { return (Point){x, y}; }$/;"	f
+makePoint	quadtree.h	/^Point makePoint(float x, float y)$/;"	f
 makeRect	quadtree.h	/^Rect makeRect(const float x, const float y, const float w, const float h)$/;"	f
 mouse	game.h	/^SDL_Point mouse;$/;"	v
 next	doub_link_list.h	/^	struct Node *next, *prev;$/;"	m	struct:Node	typeref:struct:Node::Node
 north_east	quadtree.h	/^	struct QuadTree* north_east;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
 north_west	quadtree.h	/^	struct QuadTree* north_west;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
-origin	quadtree.h	/^	Point origin;$/;"	m	struct:Rect
+pointInCircle	quadtree.h	/^bool pointInCircle(const Point* const p, const Circle* const c)$/;"	f
 pointInRect	quadtree.h	/^bool pointInRect(const Point* const p, const Rect* const r)$/;"	f
-points	game.h	/^SDL_Point points[POINT_COUNT];$/;"	v
+points	game.h	/^SDL_FPoint points[POINT_COUNT];$/;"	v
 points	quadtree.h	/^	vec_p_t points;$/;"	m	struct:QuadTree
 prev	doub_link_list.h	/^	struct Node *next, *prev;$/;"	m	struct:Node	typeref:struct:Node::
-qt_destroy	quadtree.h	/^bool qt_destroy(QuadTree* const qt)$/;"	f
-qt_getPointsInRect	quadtree.h	/^void qt_getPointsInRect(QuadTree* const qt,$/;"	f
+qt	game.h	/^	struct QuadTree* qt;$/;"	m	struct:game_t	typeref:struct:game_t::QuadTree
+qt_clear	quadtree.h	/^void qt_clear(QuadTree* const qt, uint16_t level)$/;"	f
+qt_destroy	quadtree.h	/^bool qt_destroy(QuadTree* qt)$/;"	f
+qt_getPointsInCircle	quadtree.h	/^void qt_getPointsInCircle(QuadTree* const qt,$/;"	f
+qt_getPointsInRect	quadtree.h	/^void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* const vec)$/;"	f
 qt_init	quadtree.h	/^bool qt_init(QuadTree** qt, const Rect rect)$/;"	f
 qt_insert	quadtree.h	/^bool qt_insert(QuadTree* const qt, const Point p)$/;"	f
-qt_subdivide	quadtree.h	/^void qt_subdivide(QuadTree* const qt)$/;"	f
+qt_subdivide	quadtree.h	/^bool qt_subdivide(QuadTree* const qt)$/;"	f
+r	quadtree.h	/^	float r;$/;"	m	struct:__anon1
 randomizePoints	game.h	/^void randomizePoints(void)$/;"	f
-rect_array	game.h	/^	SDL_Rect rect_array[GRID_LENGTH];$/;"	m	struct:Grid
 south_east	quadtree.h	/^	struct QuadTree* south_east;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
 south_west	quadtree.h	/^	struct QuadTree* south_west;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
 state	game.h	/^	enum state_t state;$/;"	m	struct:game_t	typeref:enum:game_t::state_t
 state_t	game.h	/^enum state_t$/;"	g
 tail	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
-total_points	quadtree.h	/^	size_t total_points;$/;"	m	struct:QuadTree
-v	game.h	/^	vec_point_t v;$/;"	m	struct:grid_t
 vec_char_t	vec.h	/^typedef vec_t(char) vec_char_t;$/;"	t
 vec_clear	vec.h	56;"	d
 vec_compact	vec.h	64;"	d
@@ -103,13 +100,14 @@ vec_foreach	vec.h	111;"	d
 vec_foreach_ptr	vec.h	123;"	d
 vec_foreach_ptr_rev	vec.h	129;"	d
 vec_foreach_rev	vec.h	117;"	d
+vec_frect_t	grid.c	/^typedef vec_t(SDL_FRect) vec_frect_t;$/;"	t	file:
 vec_init	vec.h	28;"	d
 vec_insert	vec.h	44;"	d
 vec_insert_	vec.c	/^int vec_insert_(char **data, int *length, int *capacity, int memsz, int idx)$/;"	f
 vec_int_t	vec.h	/^typedef vec_t(int) vec_int_t;$/;"	t
 vec_last	vec.h	60;"	d
 vec_p_t	quadtree.h	/^typedef vec_t(Point) vec_p_t;$/;"	t
-vec_point_t	game.h	/^typedef vec_t(Point) vec_point_t;$/;"	t
+vec_point_t	quadtree.h	/^typedef vec_t(Point) vec_point_t;$/;"	t
 vec_pop	vec.h	36;"	d
 vec_push	vec.h	32;"	d
 vec_pusharr	vec.h	66;"	d
@@ -130,6 +128,5 @@ vec_t	vec.h	21;"	d
 vec_truncate	vec.h	53;"	d
 vec_unpack_	vec.h	18;"	d
 vec_void_t	vec.h	/^typedef vec_t(void *) vec_void_t;$/;"	t
-w	quadtree.h	/^	float w, h;$/;"	m	struct:Rect
-x	quadtree.h	/^	float x, y;$/;"	m	struct:Point
-y	quadtree.h	/^	float x, y;$/;"	m	struct:Point
+x	quadtree.h	/^	float x, y;$/;"	m	struct:__anon1
+y	quadtree.h	/^	float x, y;$/;"	m	struct:__anon1
