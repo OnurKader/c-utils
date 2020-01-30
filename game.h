@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
 #include "doub_link_list.h"
 #include "quadtree.h"
@@ -66,12 +67,14 @@ void initGame(game_t* game)
 	game->state = RUNNING;
 	game->qt = NULL;
 	// TODO Change the first HEIGHT to WIDTH
+	Uint32 start_time = SDL_GetTicks();
 	const Rect qt_rect = makeRect(0.f, 0.f, WIDTH, HEIGHT);
 	if(!qt_init(&game->qt, qt_rect))
 	{
 		fprintf(stderr, "Couldn't Create QuadTree\n");
 		exit(1);
 	}
+	printf("qt_init() took %u milliseconds\n", SDL_GetTicks() - start_time);
 }
 
 void deinitGame(game_t* game)
@@ -103,4 +106,6 @@ void randomizePoints(void)
 		points[i].y = rand() % HEIGHT;
 	}
 }
+
+#endif
 

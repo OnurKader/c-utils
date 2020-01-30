@@ -3,7 +3,8 @@
 // Define an SDL_FRect vector
 typedef vec_t(SDL_FRect) vec_frect_t;
 
-// Function to get the rectangular boundaries from QT and put them into a SDL_FRect vector
+// Function to get the rectangular boundaries from QT and put them into a
+// SDL_FRect vector
 void getFRect(vec_frect_t* const vec, QuadTree* const qt)
 {
 	if(!qt)
@@ -31,13 +32,13 @@ void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* const point_array)
 
 int main(void)
 {
+	printf("\033[3J\033[2J\033[H");
+
 	if(SDL_Init(SDL_INIT_VIDEO))
 	{
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
-
-	printf("\033[3J\033[2J\033[H");
 
 	game_t game;
 	initGame(&game);
@@ -99,8 +100,14 @@ int main(void)
 						case SDLK_g: draw_grid = !draw_grid; break;
 						case SDLK_i:
 						{
+							Uint32 start_time = SDL_GetTicks();
 							insertPointsIntoQT(game.qt, points);
+							printf("Point insertion to qt took: %u milliseconds\n",
+								   SDL_GetTicks() - start_time);
+							start_time = SDL_GetTicks();
 							getFRect(&qt_frect_vec, game.qt);
+							printf("Getting boundaries took   : %u milliseconds\n",
+								   SDL_GetTicks() - start_time);
 							break;
 						}
 						default: break;
@@ -155,7 +162,6 @@ int main(void)
 			SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
 		}
 
-		// QT Grid Stuff
 		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 120U);
 		SDL_RenderDrawRectsF(render, qt_frect_vec.data, qt_frect_vec.length);
 

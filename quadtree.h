@@ -99,11 +99,8 @@ bool qt_destroy(QuadTree* qt)
 
 bool qt_insert(QuadTree* const, const Point);
 
-uint64_t oof = 0UL;
-
 bool qt_subdivide(QuadTree* const qt)
 {
-	printf("\033[2;1HSubdivide: %lu   \n", ++oof);
 	if(qt->north_west)
 	{
 		qt_subdivide(qt->north_west);
@@ -113,8 +110,10 @@ bool qt_subdivide(QuadTree* const qt)
 	}
 
 	Rect rect;
-	rect = makeRect(
-		qt->boundary.x, qt->boundary.y, qt->boundary.w / 2.f, qt->boundary.h / 2.f);
+	rect = makeRect(qt->boundary.x,
+					qt->boundary.y,
+					qt->boundary.w / 2.f,
+					qt->boundary.h / 2.f);
 
 	qt_init(&qt->north_west, rect);
 	rect.x = qt->boundary.x + qt->boundary.w / 2.f;
@@ -154,11 +153,11 @@ bool qt_subdivide(QuadTree* const qt)
 	return true;
 }
 
-uint64_t woah = 0UL;
-
+// Either store Point* or whenever you insert a new point balance the tree,
+// which sucks It should be a seperate function which the user can run or maybe
+// call it in subdivide();
 bool qt_insert(QuadTree* const qt, const Point p)
 {
-	printf("\033[1;1HInsert: %lu    \n", ++woah);
 	if(!pointInRect(&p, &qt->boundary))
 		return false;
 
@@ -197,7 +196,9 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	return false;
 }
 
-void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* vec)
+void qt_getPointsInRect(QuadTree* const qt,
+						const Rect* const rect,
+						vec_p_t* vec)
 {
 	if(!intersects(&qt->boundary, rect))
 		return;
@@ -218,4 +219,3 @@ void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* vec
 }
 
 #endif
-

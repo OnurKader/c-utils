@@ -5,13 +5,13 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 BUCKET_SIZE	quadtree.h	13;"	d
-GRID_COL	game.h	24;"	d
-GRID_H	game.h	21;"	d
-GRID_LENGTH	game.h	26;"	d
-GRID_ROW	game.h	23;"	d
-GRID_W	game.h	20;"	d
+GRID_COL	game.h	23;"	d
+GRID_H	game.h	20;"	d
+GRID_LENGTH	game.h	25;"	d
+GRID_ROW	game.h	22;"	d
+GRID_W	game.h	19;"	d
 Grid	game.h	/^struct Grid$/;"	s
-HEIGHT	game.h	18;"	d
+HEIGHT	game.h	17;"	d
 INPUT	game.h	/^	INPUT,$/;"	e	enum:state_t
 List	doub_link_list.h	/^typedef struct List$/;"	s
 List	doub_link_list.h	/^} List;$/;"	t	typeref:struct:List
@@ -19,7 +19,7 @@ MAX_LIST_LENGTH	doub_link_list.h	8;"	d
 Node	doub_link_list.h	/^typedef struct Node$/;"	s
 Node	doub_link_list.h	/^} Node;$/;"	t	typeref:struct:Node
 OUTPUT	game.h	/^	OUTPUT$/;"	e	enum:state_t
-POINT_COUNT	game.h	88;"	d
+POINT_COUNT	game.h	89;"	d
 Point	quadtree.h	/^typedef SDL_FPoint Point;$/;"	t
 QUADTREE_H	quadtree.h	2;"	d
 QUITTING	game.h	/^	QUITTING,$/;"	e	enum:state_t
@@ -29,7 +29,7 @@ RUNNING	game.h	/^	RUNNING,$/;"	e	enum:state_t
 Rect	quadtree.h	/^typedef SDL_FRect Rect;$/;"	t
 VEC_H	vec.h	11;"	d
 VEC_VERSION	vec.h	16;"	d
-WIDTH	game.h	17;"	d
+WIDTH	game.h	16;"	d
 boundary	quadtree.h	/^	Rect boundary;$/;"	m	struct:QuadTree
 deinitGame	game.h	/^void deinitGame(game_t* game)$/;"	f
 elem	doub_link_list.h	/^	int64_t elem;$/;"	m	struct:Node
@@ -43,7 +43,7 @@ grid_t	game.h	/^} grid_t;$/;"	t	typeref:struct:grid_t
 grids	game.h	/^	grid_t grids[GRID_ROW][GRID_COL];$/;"	m	struct:Grid
 head	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
 initGame	game.h	/^void initGame(game_t* game)$/;"	f
-insertPointsIntoQT	grid.c	/^void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* point_array)$/;"	f
+insertPointsIntoQT	grid.c	/^void insertPointsIntoQT(QuadTree* const qt, const SDL_Point* const point_array)$/;"	f
 intersects	quadtree.h	/^bool intersects(const Rect* const r1, const Rect* const r2)$/;"	f
 length	doub_link_list.h	/^	size_t length;$/;"	m	struct:List
 list_createNode	doub_link_list.h	/^Node* list_createNode(int64_t num)$/;"	f
@@ -69,10 +69,10 @@ points	quadtree.h	/^	vec_p_t points;$/;"	m	struct:QuadTree
 prev	doub_link_list.h	/^	struct Node *next, *prev;$/;"	m	struct:Node	typeref:struct:Node::
 qt	game.h	/^	struct QuadTree* qt;$/;"	m	struct:game_t	typeref:struct:game_t::QuadTree
 qt_destroy	quadtree.h	/^bool qt_destroy(QuadTree* qt)$/;"	f
-qt_getPointsInRect	quadtree.h	/^void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* vec)$/;"	f
+qt_getPointsInRect	quadtree.h	/^void qt_getPointsInRect(QuadTree* const qt,$/;"	f
 qt_init	quadtree.h	/^bool qt_init(QuadTree** qt, const Rect rect)$/;"	f
 qt_insert	quadtree.h	/^bool qt_insert(QuadTree* const qt, const Point p)$/;"	f
-qt_subdivide	quadtree.h	/^void qt_subdivide(QuadTree* const qt)$/;"	f
+qt_subdivide	quadtree.h	/^bool qt_subdivide(QuadTree* const qt)$/;"	f
 randomizePoints	game.h	/^void randomizePoints(void)$/;"	f
 rect_array	game.h	/^	SDL_Rect rect_array[GRID_LENGTH];$/;"	m	struct:Grid
 south_east	quadtree.h	/^	struct QuadTree* south_east;$/;"	m	struct:QuadTree	typeref:struct:QuadTree::QuadTree
@@ -80,8 +80,6 @@ south_west	quadtree.h	/^	struct QuadTree* south_west;$/;"	m	struct:QuadTree	type
 state	game.h	/^	enum state_t state;$/;"	m	struct:game_t	typeref:enum:game_t::state_t
 state_t	game.h	/^enum state_t$/;"	g
 tail	doub_link_list.h	/^	Node *head, *tail;$/;"	m	struct:List
-total_points	quadtree.h	/^	size_t total_points;$/;"	m	struct:QuadTree
-updateQTGrid	grid.c	/^void updateQTGrid(vec_rect_t* vec, vec_frect_t* f_vec)$/;"	f
 v	game.h	/^	vec_point_t v;$/;"	m	struct:grid_t
 vec_char_t	vec.h	/^typedef vec_t(char) vec_char_t;$/;"	t
 vec_clear	vec.h	56;"	d
@@ -109,7 +107,6 @@ vec_point_t	quadtree.h	/^typedef vec_t(Point) vec_point_t;$/;"	t
 vec_pop	vec.h	36;"	d
 vec_push	vec.h	32;"	d
 vec_pusharr	vec.h	66;"	d
-vec_rect_t	grid.c	/^typedef vec_t(SDL_Rect) vec_rect_t;$/;"	t	file:
 vec_remove	vec.h	92;"	d
 vec_reserve	vec.h	62;"	d
 vec_reserve_	vec.c	/^int vec_reserve_(char **data, int *length, int *capacity, int memsz, int n)$/;"	f
