@@ -110,10 +110,8 @@ bool qt_subdivide(QuadTree* const qt)
 	}
 
 	Rect rect;
-	rect = makeRect(qt->boundary.x,
-					qt->boundary.y,
-					qt->boundary.w / 2.f,
-					qt->boundary.h / 2.f);
+	rect = makeRect(
+		qt->boundary.x, qt->boundary.y, qt->boundary.w / 2.f, qt->boundary.h / 2.f);
 
 	qt_init(&qt->north_west, rect);
 	rect.x = qt->boundary.x + qt->boundary.w / 2.f;
@@ -196,9 +194,7 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	return false;
 }
 
-void qt_getPointsInRect(QuadTree* const qt,
-						const Rect* const rect,
-						vec_p_t* vec)
+void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* const vec)
 {
 	if(!intersects(&qt->boundary, rect))
 		return;

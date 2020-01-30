@@ -47,6 +47,13 @@ int main(void)
 	vec_init(&qt_frect_vec);
 	vec_reserve(&qt_frect_vec, 1024U);
 
+	vec_p_t queried_points;
+	vec_init(&queried_points);
+	vec_reserve(&queried_points, 16U);
+
+	// Query boundary
+	SDL_FRect query = (SDL_FRect){mouse.x - 100, mouse.y - 100, 200, 200};
+
 	bool draw_grid = false;
 
 	SDL_Window* window = SDL_CreateWindow("Grid Particle System",
@@ -109,6 +116,10 @@ int main(void)
 								   SDL_GetTicks() - start_time);
 							break;
 						}
+						case SDLK_s:
+							// TODO
+							qt_getPointsInRect(game.qt, &query, &queried_points);
+							break;
 						default: break;
 					}
 					break;
@@ -118,23 +129,23 @@ int main(void)
 		}
 
 		// Handle WASD / Arrow Keys
-		const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-		if(currentKeyStates[SDL_SCANCODE_UP])
-		{
-			printf("UP!\n");
-		}
-		else if(currentKeyStates[SDL_SCANCODE_DOWN])
-		{
-			printf("DOWN!\n");
-		}
-		else if(currentKeyStates[SDL_SCANCODE_LEFT])
-		{
-			printf("LEFT!\n");
-		}
-		else if(currentKeyStates[SDL_SCANCODE_RIGHT])
-		{
-			printf("RIGHT!\n");
-		}
+		/* const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL); */
+		/* if(currentKeyStates[SDL_SCANCODE_UP]) */
+		/* { */
+		/* 	printf("UP!\n"); */
+		/* } */
+		/* else if(currentKeyStates[SDL_SCANCODE_DOWN]) */
+		/* { */
+		/* 	printf("DOWN!\n"); */
+		/* } */
+		/* else if(currentKeyStates[SDL_SCANCODE_LEFT]) */
+		/* { */
+		/* 	printf("LEFT!\n"); */
+		/* } */
+		/* else if(currentKeyStates[SDL_SCANCODE_RIGHT]) */
+		/* { */
+		/* 	printf("RIGHT!\n"); */
+		/* } */
 
 		if(draw_grid)
 		{
@@ -160,13 +171,34 @@ int main(void)
 			SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
 		}
 
-		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 120U);
+		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 101U);
 		SDL_RenderDrawRectsF(render, qt_frect_vec.data, qt_frect_vec.length);
+
+		// Draw a rectangle at the center as the query boundary
+		query.x = mouse.x;
+		query.y = mouse.y;
+		SDL_SetRenderDrawColor(render, 140, 24, 220, 254);
+		SDL_RenderDrawRectF(render, &query);
+
+		// Draw the queried points
+		SDL_SetRenderDrawColor(render, 2, 255, 3, 254);
+		for(uint16_t i = 0U; i < queried_points.length; ++i)
+		{
+			filledCircleRGBA(render,
+							 queried_points.data[i].x,
+							 queried_points.data[i].y,
+							 1U,
+							 3U,
+							 255U,
+							 4U,
+							 254U);
+		}
 
 		SDL_RenderPresent(render);
 	}
 
 	vec_deinit(&qt_frect_vec);
+	vec_deinit(&queried_points);
 
 	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);
