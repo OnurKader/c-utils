@@ -15,14 +15,29 @@
 
 typedef SDL_FPoint Point;
 typedef SDL_FRect Rect;
+typedef struct
+{
+	float x, y;
+	float r;
+} Circle;
 
 typedef vec_t(Point) vec_p_t;
 typedef vec_t(Point) vec_point_t;
+
+float dist(float x, float y, float z, float w)
+{
+	return sqrtf((x - z) * (x - z) + (y - w) * (y - w));
+}
 
 bool pointInRect(const Point* const p, const Rect* const r)
 {
 	return ((p->x >= r->x) && (p->x < r->x + r->w) && (p->y >= r->y) &&
 			(p->y < r->y + r->h));
+}
+
+bool pointInCircle(const Point* const p, const Circle* const c)
+{
+	return (dist(p->x, p->y, c->x, c->y) < c->r);
 }
 
 bool intersects(const Rect* const r1, const Rect* const r2)
@@ -40,7 +55,16 @@ bool intersects(const Rect* const r1, const Rect* const r2)
 	return true;
 }
 
-Point makePoint(float x, float y) { return (Point){x, y}; }
+bool intersectCircle(const Rect* const r, const Circle* const c)
+{
+	// Now this is where the fun begins *Smirk*
+	return false;
+}
+
+Point makePoint(float x, float y)
+{
+	return (Point){x, y};
+}
 
 Rect makeRect(const float x, const float y, const float w, const float h)
 {
@@ -194,8 +218,11 @@ bool qt_insert(QuadTree* const qt, const Point p)
 	return false;
 }
 
+uint32_t count = 0U;
+
 void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* const vec)
 {
+	++count;
 	if(!intersects(&qt->boundary, rect))
 		return;
 
@@ -210,8 +237,28 @@ void qt_getPointsInRect(QuadTree* const qt, const Rect* const rect, vec_p_t* con
 	qt_getPointsInRect(qt->north_east, rect, vec);
 	qt_getPointsInRect(qt->south_west, rect, vec);
 	qt_getPointsInRect(qt->south_east, rect, vec);
+}
 
-	return;
+void qt_getPointsInCircle(QuadTree* const qt,
+						  const Circle* const circle,
+						  vec_p_t* const vec)
+{
+	++count;
+	// OOF TODO Add Circle-Rectangle intersection
+	if(!intersectCircle(&qt->boundary, circle))
+		return;
+
+	for(uint8_t i = 0U; i < qt->points.length; ++i)
+		if(pointInCircle(&qt->points.data[i], circle))
+			vec_push(vec, qt->points.data[i]);
+
+	if(!qt->north_west)
+		return;
+
+	qt_getPointsInCircle(qt->north_west, circle, vec);
+	qt_getPointsInCircle(qt->north_east, circle, vec);
+	qt_getPointsInCircle(qt->south_west, circle, vec);
+	qt_getPointsInCircle(qt->south_east, circle, vec);
 }
 
 #endif

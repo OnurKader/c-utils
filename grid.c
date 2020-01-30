@@ -1,5 +1,7 @@
 #include "game.h"
 
+#define QUERY 1
+
 // Define an SDL_FRect vector
 typedef vec_t(SDL_FRect) vec_frect_t;
 
@@ -29,6 +31,11 @@ void insertPointsIntoQT(QuadTree* const qt, const SDL_FPoint* const point_array)
 	}
 }
 
+Uint32 getFPS(Uint32 start, Uint32 end)
+{
+	return 1000 / (end - start);
+}
+
 int main(void)
 {
 	printf("\033[3J\033[2J\033[H");
@@ -49,12 +56,17 @@ int main(void)
 
 	vec_p_t queried_points;
 	vec_init(&queried_points);
-	vec_reserve(&queried_points, 16U);
+	vec_reserve(&queried_points, 64U);
+
+	Uint16 fps = 0U;
+	Uint64 frame_count = 0ULL;
+	Uint32 fps_timer = SDL_GetTicks();
 
 	// Query boundary
-	SDL_FRect query = (SDL_FRect){mouse.x - 100, mouse.y - 100, 200, 200};
+	Rect query_rect = (Rect){WIDTH / 2.f, HEIGHT / 2.f, 200, 200};
+	Circle query_circle = (Circle){WIDTH / 2.f, HEIGHT / 2.f, 125};
 
-	bool draw_grid = false;
+	bool draw_grid = true;
 
 	SDL_Window* window = SDL_CreateWindow("Grid Particle System",
 										  SDL_WINDOWPOS_UNDEFINED,
@@ -85,6 +97,9 @@ int main(void)
 		SDL_SetRenderDrawColor(render, 12U, 12U, 32U, 255U);
 		SDL_RenderClear(render);
 
+		fps_timer = SDL_GetTicks();
+		++frame_count;
+
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
@@ -108,17 +123,21 @@ int main(void)
 						{
 							Uint32 start_time = SDL_GetTicks();
 							insertPointsIntoQT(game.qt, points);
-							printf("Point insertion to qt took: %u milliseconds\n",
+							printf("\033[1HPoint insertion to qt took: %u milliseconds\n",
 								   SDL_GetTicks() - start_time);
 							start_time = SDL_GetTicks();
 							getFRect(&qt_frect_vec, game.qt);
-							printf("Getting boundaries took   : %u milliseconds\n",
+							printf("\033[2HGetting boundaries took   : %u milliseconds\n",
 								   SDL_GetTicks() - start_time);
 							break;
 						}
 						case SDLK_s:
-							// TODO
-							qt_getPointsInRect(game.qt, &query, &queried_points);
+#if !QUERY
+							qt_getPointsInRect(game.qt, &query_rect, &queried_points);
+#else
+							qt_getPointsInCircle(game.qt, &query_circle, &queried_points);
+#endif
+							printf("\033[3HCount: %u\n", count);
 							break;
 						default: break;
 					}
@@ -147,16 +166,16 @@ int main(void)
 		/* 	printf("RIGHT!\n"); */
 		/* } */
 
-		if(draw_grid)
-		{
-			SDL_Rect rect = (SDL_Rect){1 + GRID_W * (mouse.x / GRID_W),
-									   1 + GRID_H * (mouse.y / GRID_H),
-									   GRID_W - 1,
-									   GRID_H - 1};
+		/* if(draw_grid) */
+		/* { */
+		/* 	SDL_Rect rect = (SDL_Rect){1 + GRID_W * (mouse.x / GRID_W), */
+		/* 							   1 + GRID_H * (mouse.y / GRID_H), */
+		/* 							   GRID_W - 1, */
+		/* 							   GRID_H - 1}; */
 
-			SDL_SetRenderDrawColor(render, 72U, 82U, 64U, 255U);
-			SDL_RenderFillRect(render, &rect);
-		}
+		/* 	SDL_SetRenderDrawColor(render, 72U, 82U, 64U, 255U); */
+		/* 	SDL_RenderFillRect(render, &rect); */
+		/* } */
 
 		/* SDL_SetRenderDrawColor(render, 255U, 24U, 24U, 254U); */
 		/* SDL_RenderDrawPointsF(render, points, POINT_COUNT); */
@@ -165,20 +184,30 @@ int main(void)
 			filledCircleRGBA(render, points[i].x, points[i].y, 1U, 255U, 24U, 24U, 222U);
 		}
 
+		/* if(draw_grid) */
+		/* { */
+		/* 	SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U); */
+		/* 	SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH); */
+		/* } */
+
 		if(draw_grid)
 		{
-			SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 255U);
-			SDL_RenderDrawRects(render, game.grid.rect_array, GRID_LENGTH);
+			SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 101U);
+			SDL_RenderDrawRectsF(render, qt_frect_vec.data, qt_frect_vec.length);
 		}
 
-		SDL_SetRenderDrawColor(render, 183U, 183U, 64U, 101U);
-		SDL_RenderDrawRectsF(render, qt_frect_vec.data, qt_frect_vec.length);
-
 		// Draw a rectangle at the center as the query boundary
-		query.x = mouse.x;
-		query.y = mouse.y;
+#if !QUERY
+		query_rect.x = mouse.x - 100.f;
+		query_rect.y = mouse.y - 100.f;
 		SDL_SetRenderDrawColor(render, 140, 24, 220, 254);
-		SDL_RenderDrawRectF(render, &query);
+		SDL_RenderDrawRectF(render, &query_rect);
+#else
+		query_circle.x = mouse.x + 0.f;
+		query_circle.y = mouse.y + 0.f;
+		circleRGBA(
+			render, query_circle.x, query_circle.y, query_circle.r, 140, 24, 220, 254);
+#endif
 
 		// Draw the queried points
 		SDL_SetRenderDrawColor(render, 2, 255, 3, 254);
@@ -195,6 +224,13 @@ int main(void)
 		}
 
 		SDL_RenderPresent(render);
+
+		// Show FPS
+		if(frame_count % 6 == 0)
+		{
+			fps = 1 + getFPS(fps_timer, SDL_GetTicks());
+			printf("\033[5HFPS:%3d\n", fps);
+		}
 	}
 
 	vec_deinit(&qt_frect_vec);
