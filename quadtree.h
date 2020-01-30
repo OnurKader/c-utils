@@ -117,6 +117,9 @@ bool qt_init(QuadTree** qt, const Rect rect)
 
 bool qt_destroy(QuadTree* qt)
 {
+	if(!qt)
+		return false;
+
 	vec_deinit(&qt->points);
 	if(!qt->north_west)
 	{
@@ -140,10 +143,10 @@ bool qt_subdivide(QuadTree* const qt)
 		qt_subdivide(qt->north_east);
 		qt_subdivide(qt->south_west);
 		qt_subdivide(qt->south_east);
+		return false;
 	}
 
-	Rect rect;
-	rect = makeRect(
+	Rect rect = makeRect(
 		qt->boundary.x, qt->boundary.y, qt->boundary.w / 2.f, qt->boundary.h / 2.f);
 
 	qt_init(&qt->north_west, rect);
@@ -268,6 +271,32 @@ void qt_getPointsInCircle(QuadTree* const qt,
 	qt_getPointsInCircle(qt->north_east, circle, vec);
 	qt_getPointsInCircle(qt->south_west, circle, vec);
 	qt_getPointsInCircle(qt->south_east, circle, vec);
+}
+
+void qt_clear(QuadTree* const qt, uint16_t level)
+{
+	if(!qt || level == UINT16_MAX)	  // Somehow qt == NULL
+		return;
+
+	if(!qt->north_west)	   // If qt doesn't have a child
+	{
+		/* if(level)	 // Child QT */
+		/* { */
+		/* 	qt_destroy(qt); */
+		/* } */
+		/* else	// Root QT */
+		vec_clear(&qt->points);
+		return;
+	}
+	qt_clear(qt->north_west, level + 1);
+	qt_clear(qt->north_east, level + 1);
+	qt_clear(qt->south_west, level + 1);
+	qt_clear(qt->south_east, level + 1);
+
+	/* qt_destroy(qt->north_west); */
+	/* qt_destroy(qt->north_east); */
+	/* qt_destroy(qt->south_west); */
+	/* qt_destroy(qt->south_east); */
 }
 
 #endif
