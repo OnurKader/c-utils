@@ -24,6 +24,21 @@ typedef struct
 typedef vec_t(Point) vec_p_t;
 typedef vec_t(Point) vec_point_t;
 
+Point makePoint(float x, float y)
+{
+	return (Point){x, y};
+}
+
+Rect makeRect(const float x, const float y, const float w, const float h)
+{
+	Rect temp;
+	temp.x = x;
+	temp.y = y;
+	temp.w = w;
+	temp.h = h;
+	return temp;
+}
+
 float dist(float x, float y, float z, float w)
 {
 	return sqrtf((x - z) * (x - z) + (y - w) * (y - w));
@@ -55,25 +70,19 @@ bool intersects(const Rect* const r1, const Rect* const r2)
 	return true;
 }
 
-bool intersectCircle(const Rect* const r, const Circle* const c)
+bool intersectCircle(const Rect* const _r, const Circle* const c)
 {
-	// Now this is where the fun begins *Smirk*
-	return false;
-}
+	const Rect temp = makeRect(_r->x + _r->w / 2.f, _r->y + _r->h / 2.f, _r->w, _r->h);
+	const Rect* const r = &temp;
 
-Point makePoint(float x, float y)
-{
-	return (Point){x, y};
-}
-
-Rect makeRect(const float x, const float y, const float w, const float h)
-{
-	Rect temp;
-	temp.x = x;
-	temp.y = y;
-	temp.w = w;
-	temp.h = h;
-	return temp;
+	Point circle_dist = makePoint(fabs(c->x - r->x), fabs(c->y - r->y));
+	if((circle_dist.x > (r->w / 2.f + c->r)) || (circle_dist.y > (r->h / 2.f + c->r)))
+		return false;
+	if((circle_dist.x <= (r->w / 2.f)) || (circle_dist.y <= (r->h / 2.f)))
+		return true;
+	float corner =
+		powf(circle_dist.x - r->w / 2.f, 2.f) + powf(circle_dist.y - r->h / 2.f, 2.f);
+	return (corner <= (c->r * c->r));
 }
 
 typedef struct QuadTree
@@ -262,3 +271,4 @@ void qt_getPointsInCircle(QuadTree* const qt,
 }
 
 #endif
+
