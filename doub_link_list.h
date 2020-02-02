@@ -72,7 +72,10 @@ int8_t list_destroy(List* list)
 	return 1;
 }
 
-int8_t list_isEmpty(List* list) { return (list->length == 0); }
+int8_t list_isEmpty(List* list)
+{
+	return (list->length == 0);
+}
 
 int8_t list_push(List* list, int64_t num)
 {

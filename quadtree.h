@@ -256,7 +256,6 @@ void qt_getPointsInCircle(QuadTree* const qt,
 						  vec_p_t* const vec)
 {
 	++count;
-	// OOF TODO Add Circle-Rectangle intersection
 	if(!intersectCircle(&qt->boundary, circle))
 		return;
 
@@ -273,6 +272,7 @@ void qt_getPointsInCircle(QuadTree* const qt,
 	qt_getPointsInCircle(qt->south_east, circle, vec);
 }
 
+// FIXME TODO
 void qt_clear(QuadTree* const qt, uint16_t level)
 {
 	if(!qt || level == UINT16_MAX)	  // Somehow qt == NULL
